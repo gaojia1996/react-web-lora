@@ -1,0 +1,15 @@
+.myTextStyle{
+  text-indent: 2em;
+  text-align: left;
+  font-size: large;
+  font-family : 微软雅黑,宋体, 'New York';
+  padding: 10px 0 10px 0;
+}
+
+.loraStyle{
+  text-indent: 2em;
+  text-align: left;
+  font-size: large;
+  font-family : 微软雅黑,宋体, 'New York';
+  padding: 10px 0 10px 0;
+}
