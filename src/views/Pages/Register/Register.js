@@ -10,7 +10,6 @@ class Register extends Component {
     this.state = {
       email: null,
       password: null,
-      err: null,
     }
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
@@ -27,21 +26,12 @@ class Register extends Component {
     });
   }
   handleSubmit() {
-    return new Promise((resolve) => {
-      this.props.userRegister(this.state.email, this.state.password);
-      return resolve();
-    })
-      .then(() => {
-        if (this.props.data.userLogin) {
-          this.props.history.push('/');
-        } else {
-          this.setState({
-            err: "注册账号不成功，请重新注册!",
-          })
-        }
-      });
+    this.props.userRegister(this.state.email, this.state.password);
   }
   render() {
+    if (this.props.data.userLogin) {
+      this.props.history.push('/home');
+    }
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -50,7 +40,7 @@ class Register extends Component {
               <Card className="mx-4">
                 <CardBody className="p-4">
                   <h1 className="text-center">注册</h1>
-                  <p>{this.state.err}</p>
+                  <p>{this.props.data.userLogin ? " " : this.props.data.registerErr}</p>
                   <InputGroup className="mb-3">
                     <InputGroupText>
                       <i className="icon-envelope"></i>

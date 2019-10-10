@@ -38,17 +38,15 @@ class DefaultHeader extends Component {
           {this.props.data.userLogin ? (
             <React.Fragment >
               <AppHeaderDropdown direction="down">
-                <DropdownToggle style={{ color: '#ffffff' }}>
-                  <NavItem className="d-md-down-none" style={{ color: '#ffffff' }}>
-                    {this.props.data.userEmail}
-                  </NavItem>
-                  <NavItem className="d-md-down-none">
-                  </NavItem>
+                <DropdownToggle nav>
+                  <div className="mystyle">{this.props.data.userEmail}</div>
                 </DropdownToggle>
-                <DropdownMenu right style={{ right: 'auto' }}>
+                <DropdownMenu left="true" >
                   <DropdownItem onClick={this.handleLogout}><i className="fa fa-lock"></i> Logout</DropdownItem>
                 </DropdownMenu>
               </AppHeaderDropdown>
+              <NavItem className="d-md-down-none">
+              </NavItem>
             </React.Fragment>
           ) : (
               <React.Fragment >

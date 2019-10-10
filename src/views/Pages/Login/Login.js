@@ -11,7 +11,6 @@ class Login extends Component {
     this.state = {
       email: null,
       password: null,
-      err: null,
     }
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
@@ -28,21 +27,12 @@ class Login extends Component {
     });
   }
   handleSubmit() {
-    return new Promise((resolve) => {
-      this.props.userLogin(this.state.email, this.state.password);
-      return resolve();
-    })
-      .then(() => {
-        if (this.props.data.userLogin) {
-          this.props.history.push('/');
-        } else {
-          this.setState({
-            err: "用户登录失败，请重新登录!",
-          })
-        }
-      });
+    this.props.userLogin(this.state.email, this.state.password);
   }
   render() {
+    if (this.props.data.userLogin) {
+      this.props.history.push('/home');
+    }
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -53,7 +43,7 @@ class Login extends Component {
                   <CardBody>
                     {/* <Form onSubmit={this.handleSubmit}> */}
                     <h2 className="text-center">登录</h2>
-                    <p>{this.state.err}</p>
+                    <p>{this.props.data.userLogin ? " " : this.props.data.loginErr}</p>
                     <FormGroup>
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
@@ -79,7 +69,7 @@ class Login extends Component {
                     <Row>
                       <Col xs="6">
                         {this.state.password === null || this.state.password.length === 0 || this.state.email === null || this.state.email.length === 0 ?
-                          <Button color="primary" className="px-4" onClick={this.handleSubmit} disabled>Login</Button> :
+                          <Button color="primary" className="px-4" disabled>Login</Button> :
                           <Button color="primary" className="px-4" onClick={this.handleSubmit}>Login</Button>
                         }
                       </Col>

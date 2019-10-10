@@ -1,1 +1,13 @@
 // Here you can add other styles
+.app-header .nav-item .nav-link {
+  font-family: fantasy;
+}
+.mystyle{
+  color: #1cc09f;
+}
+.breadcrumb{
+  background: #332e73 !important;
+}
+.breadcrumb-item.active{
+  color: #fff !important;
+}
