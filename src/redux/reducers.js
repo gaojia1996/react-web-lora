@@ -5,6 +5,14 @@ const initialState = {
   userLogin: sessionStorage.getItem("userLogin") === "true" ? true : false, //用户是否登录的标识符
   loginErr: null, //登录失败的信息
   registerErr: null, //注册失败的信息
+  
+  gatewayInfo:[],//所有的网关信息
+  gatewayNumber:0,
+  currentPageOfGateway:1,
+  selectedGateway:null,
+  gatewayCommuData:[],
+  gatewayCommuNumber:0,
+  pageSize:1
 }
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -64,6 +72,29 @@ export default (state = initialState, action) => {
         loginErr: null,
         registerErr: null,
       };
+    }
+    //by j
+    //获取网关id
+    case "GET_GATEWAY_INFO":{
+      return {
+        ...state,
+        gatewayInfo:action.gatewayInfo,
+        gatewayNumber:action.gatewayNumber,
+        currentPageOfGateway:action.currentPageOfGateway,
+      }
+    }
+    case "SELECTED_GATEWAY":{
+      return {
+        ...state,
+        selectedGateway:action.gatewayId,
+      }
+    }
+    case "GET_GATEWAY_COMMU_DATA":{
+      return {
+        ...state,
+        gatewayCommuData:action.gatewayCommuData,
+        gatewayCommuNumber:action.gatewayCommuNumber,
+      }
     }
 
     default:
