@@ -5,7 +5,6 @@ const initialState = {
   userLogin: sessionStorage.getItem("userLogin") === "true" ? true : false, //用户是否登录的标识符
   loginErr: null, //登录失败的信息
   registerErr: null, //注册失败的信息
-<<<<<<< HEAD
 
   applicationFetch: false, //获取用户应用标识
   applicationInfo: [], //选择应用按钮的应用信息
@@ -15,7 +14,6 @@ const initialState = {
   devicesPageCurrent: 1, //设备列表当前页码
   devicesFetch: false, //设备列表数据获取标志
   devicesTableItem: [], //设备列表内容
-=======
   
   gatewayInfo:[],//所有的网关信息
   gatewayNumber:0,
@@ -24,7 +22,6 @@ const initialState = {
   gatewayCommuData:[],
   gatewayCommuNumber:0,
   pageSize:1
->>>>>>> 09566c4a8a0df77d4e7a68303d212cbfec5545bb
 }
 export default (state = initialState, action) => {
   switch (action.type) {
