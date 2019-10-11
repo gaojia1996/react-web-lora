@@ -73,7 +73,17 @@ function getGatewayCommunicateDataFunc(gatewayId,pageNumber,pageSize) {
 //   })
 //   console.log('zhixing chenggong')
 // }
-
+function getAppInfo(userID,pageNumber,pageSize) {
+  const Url = baseUrl + '/application?userID=' + userID + '&from=' + pageNumber + '&size=' + pageSize;
+  return fetch(Url, {
+    accept: "application/json",
+    mode: 'cors',
+    jsonpCallback: 'callback',
+    method: 'GET',
+  })
+    .then(checkStatus)
+    .then(parseJSON);
+}
 
 
 function checkStatus(response) {
@@ -93,7 +103,8 @@ function parseJSON(response) {
 
 const getDataFuncs = {
     getGatewayInfoFunc,
-    getGatewayCommunicateDataFunc
+    getGatewayCommunicateDataFunc,
+    getAppInfo,
     
 };
 export default getDataFuncs;
