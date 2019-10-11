@@ -5,6 +5,15 @@ const initialState = {
   userLogin: sessionStorage.getItem("userLogin") === "true" ? true : false, //用户是否登录的标识符
   loginErr: null, //登录失败的信息
   registerErr: null, //注册失败的信息
+
+  applicationFetch: false, //获取用户应用标识
+  applicationInfo: [], //选择应用按钮的应用信息
+  applicationChoose: {}, //选择应用select的选中值
+  devicesPagesize: 10, //设备列表分页页数
+  devicesPagecount: 0, //设备列表的所有数据
+  devicesPageCurrent: 1, //设备列表当前页码
+  devicesFetch: false, //设备列表数据获取标志
+  devicesTableItem: [], //设备列表内容
 }
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -22,12 +31,13 @@ export default (state = initialState, action) => {
         registerErr: null,
       };
     }
-    case "USER_REGISTER_ERROR":
+    case "USER_REGISTER_ERROR": {
       return {
         ...state,
         userLogin: false,
         registerErr: action.message,
       };
+    }
 
     case "USER_LOGIN_SUCCESS": { //用户登录相关
       sessionStorage.setItem("userEmail", action.userEmail);
@@ -43,12 +53,13 @@ export default (state = initialState, action) => {
         loginErr: null,
       };
     }
-    case "USER_LOGIN_ERROR":
+    case "USER_LOGIN_ERROR": {
       return {
         ...state,
         userLogin: false,
         loginErr: action.message,
       };
+    }
 
     case "USER_LOGOUT": { //用户登出相关
       sessionStorage.setItem("userEmail", null);
@@ -65,6 +76,50 @@ export default (state = initialState, action) => {
         registerErr: null,
       };
     }
+
+    case "GET_APPLICATION_NULL": { //获取的用户应用为空的操作
+      const applicationChoose = {
+        DevEUI: null,
+        DevAddr: null,
+        AppKey: null,
+        AppEUI: null,
+        DevNonce: null,
+        AppNonce: null,
+        NwkSKey: null,
+        AppSKey: null,
+        activationMode: null,
+        ProtocolVersion: null,
+        FCntUp: 0,
+        NFCntDown: 0,
+        AFCntDown: 0,
+        createdAt: null,
+        updatedAt: null
+      };
+      return {
+        ...state,
+        applicationFetch: true,
+        applicationChoose: applicationChoose,
+        devicesFetch: true,
+      }
+    }
+    case "GET_APPLICATION_INFO": { //获取用户的所有应用数据
+      return {
+        ...state,
+        applicationFetch: true,
+        applicationInfo: action.data,
+        applicationChoose: action.data[0],
+      }
+    }
+    case "GET_DEVICE_INFO_BY_APPEUI": { //根据应用AppEUI获取一页的设备列表
+      return {
+        ...state,
+        devicesFetch: true,
+        devicesTableItem: action.data,
+        devicesPageCurrent: action.current,
+        devicesPagecount: action.total,
+      }
+    }
+
 
     default:
       break;
