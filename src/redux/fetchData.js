@@ -27,9 +27,9 @@ function login(email, password) { //用户登录接口
     .then(parseJSON);
 }
 
-function device(userID, AppEUI, DevEUI, AppKey) { //设备注册接口 OTAA
+function device(AppEUI, DevEUI, AppKey, ProtocolVersion) { //设备注册接口 OTAA
   const Url = baseUrl + '/device';
-  const body = { userID: userID, AppEUI: AppEUI, DevEUI: DevEUI, AppKey: AppKey };
+  const body = { activationMode: "OTAA", AppEUI: AppEUI, DevEUI: DevEUI, AppKey: AppKey, ProtocolVersion: ProtocolVersion };
   return fetch(Url, {
     method: 'POST',
     headers: {
@@ -40,9 +40,15 @@ function device(userID, AppEUI, DevEUI, AppKey) { //设备注册接口 OTAA
     .then(parseJSON);
 }
 
-function deviceAbp(userID, AppEUI, DevEUI, DevAddr, AppSKey, NwkSKey) { //设备注册接口 ABP
+function deviceAbp(AppEUI, DevEUI, DevAddr, AppSKey, NwkSKey, ProtocolVersion, frequencyPlan,
+  ChMask, CFList, ChDrRange, RX1CFList, RX2Freq, RX2DataRate, MaxEIRP, ADR, DevNonce) { //设备注册接口 ABP
   const Url = baseUrl + '/device';
-  const body = { userID: userID, AppEUI: AppEUI, DevEUI: DevEUI, DevAddr: DevAddr, AppSKey: AppSKey, NwkSKey: NwkSKey };
+  const body = {
+    activationMode: "ABP", AppEUI: AppEUI, DevEUI: DevEUI, DevAddr: DevAddr, AppSKey: AppSKey,
+    NwkSKey: NwkSKey, ProtocolVersion: ProtocolVersion, frequencyPlan: frequencyPlan, ChMask: ChMask,
+    CFList: CFList, ChDrRange: ChDrRange, RX1CFList: RX1CFList, RX2Freq: RX2Freq, RX2DataRate: RX2DataRate,
+    MaxEIRP: MaxEIRP, ADR: ADR, DevNonce: DevNonce,
+  };
   return fetch(Url, {
     method: 'POST',
     headers: {
@@ -64,8 +70,8 @@ function user2application(userID) { //获取用户账户下的所有应用
     .then(parseJSON);
 }
 
-function app2device(AppEUI) { //获取应用下的所有设备
-  const Url = baseUrl + 'device?AppEUI=' + AppEUI;
+function app2device(AppEUI, pagecount, pagesize) { //获取应用下的所有设备 支持分页操作
+  const Url = baseUrl + '/device?AppEUI=' + AppEUI + '&from=' + pagecount + '&size=' + pagesize;
   return fetch(Url, {
     method: 'GET',
     headers: {
@@ -86,7 +92,7 @@ function deviceInfo(DevEUI) { //获取设备的属性信息
     .then(parseJSON);
 }
 
-function deviceData(DevEUI, pagesize, pagecount) { //获取设备的应用数据
+function deviceData(DevEUI, pagesize, pagecount) { //获取设备的应用数据 支持分页操作
   const Url = baseUrl + 'device/' + DevEUI + '/data?size=' + pagesize + '&from=' + pagecount;
   return fetch(Url, {
     method: 'GET',

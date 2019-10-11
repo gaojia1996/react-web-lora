@@ -10,12 +10,12 @@ class Index extends Component {
       <Provider store={store}>
         <div>
           <div>
-          <GatewayPage />
+            <GatewayPage />
           </div>
-          
+
         </div>
       </Provider>
     )
   }
-} 
+}
 export default Index;

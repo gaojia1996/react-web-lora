@@ -16,11 +16,11 @@ class AppPage extends Component {
       modal: false,
       name: null,
       AppEUI: this.getRandom(16),
-      pageSize:3,
-      currentPage:1,
-      data:{
-          count:0,
-          rows:[],
+      pageSize: 3,
+      currentPage: 1,
+      data: {
+        count: 0,
+        rows: [],
       },
     };
     this.handleToggle = this.handleToggle.bind(this);
@@ -28,62 +28,62 @@ class AppPage extends Component {
     this.handleAppEUI = this.handleAppEUI.bind(this);
   }
   componentDidMount() {
-      this.getAppData(this.props.data.userId,this.state.pageNumber,this.state.pageSize);
+    this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
   }
-  getAppData(userId,pageNumber,pageSize) {
- 
-    getDataFuncs.getAppInfo(userId,pageNumber,pageSize)
-    .then(res=>{
-      console.log('the appInfo in this page is ',res)
-     this.setState({
-      data:res
-     })
-    })
-    .catch(()=>{console.log('获取网关通信数据错误');})
-}
-    postAppInfo(userId,AppEUI,name) {
-        const Url = baseUrl + '/application';
-        var data = {
-            userID:userId,
-            AppEUI:AppEUI,
-            name:name,
-        }
-        fetch(Url,{
-        method:'POST',
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body:qs.stringify(data),
-        }).then(responce=>responce.json())
-        .then(res=>{
-        if(res.code===200){
-            console.log('应用创建成功');
-            alert('成功创建应用');
-            this.handleToggle();
-            const temp_data = this.state.data;
-            this.setState({
-                data:{
-                    ...temp_data,
-                    count:temp_data['count'] + 1,
-                }
-            })
-        }else if(res.code === 3108){
-            alert('名字不能为空，请重新输入');
-        }else if(res.code === 3107){
-            alert('APPEUI不能为空，请重新输入');
-        }else if(res.code === 2103){
-            alert('AppEUI格式错误，请重新输入');
-        }else if(res.code === 3201){
-            alert('创建失败，该应用已经存在');
-            this.handleToggle();
-        }
-        else{
-            alert('创建失败,遇到其它未知的错误');
-            console.log('the res code is ',res.code);
-            console.log('the res is ',res);
-            this.handleToggle();
-        }
+  getAppData(userId, pageNumber, pageSize) {
+
+    getDataFuncs.getAppInfo(userId, pageNumber, pageSize)
+      .then(res => {
+        console.log('the appInfo in this page is ', res)
+        this.setState({
+          data: res
         })
+      })
+      .catch(() => { console.log('获取网关通信数据错误'); })
+  }
+  postAppInfo(userId, AppEUI, name) {
+    const Url = baseUrl + '/application';
+    var data = {
+      userID: userId,
+      AppEUI: AppEUI,
+      name: name,
+    }
+    fetch(Url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: qs.stringify(data),
+    }).then(responce => responce.json())
+      .then(res => {
+        if (res.code === 200) {
+          console.log('应用创建成功');
+          alert('成功创建应用');
+          this.handleToggle();
+          const temp_data = this.state.data;
+          this.setState({
+            data: {
+              ...temp_data,
+              count: temp_data['count'] + 1,
+            }
+          })
+        } else if (res.code === 3108) {
+          alert('名字不能为空，请重新输入');
+        } else if (res.code === 3107) {
+          alert('APPEUI不能为空，请重新输入');
+        } else if (res.code === 2103) {
+          alert('AppEUI格式错误，请重新输入');
+        } else if (res.code === 3201) {
+          alert('创建失败，该应用已经存在');
+          this.handleToggle();
+        }
+        else {
+          alert('创建失败,遇到其它未知的错误');
+          console.log('the res code is ', res.code);
+          console.log('the res is ', res);
+          this.handleToggle();
+        }
+      })
   }
   getRandom(weishu) {
     var random = '';
@@ -112,15 +112,15 @@ class AppPage extends Component {
 
   }
   render() {
-      console.log('the app data is ',this.props.data);
-   
+    console.log('the app data is ', this.props.data);
 
-    const dataSource = this.state.data['rows'].map((each)=>{
-        return ({
-            name:each['name'],
-            AppEUI:each['AppEUI'],
-            timestamp:moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
-        })
+
+    const dataSource = this.state.data['rows'].map((each) => {
+      return ({
+        name: each['name'],
+        AppEUI: each['AppEUI'],
+        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
+      })
     })
 
     const columns = [
@@ -160,16 +160,16 @@ class AppPage extends Component {
               <CardBody>
                 <Table
                   pagination={{
-                      pageSize:this.state.pageSize,
+                    pageSize: this.state.pageSize,
                     //   current:this.state.currentPage,
-                      total:this.state.data['count']
+                    total: this.state.data['count']
                   }}
-                  onChange={(pagination)=>{
+                  onChange={(pagination) => {
                     this.setState({
-                        currentPage:pagination.current,
+                      currentPage: pagination.current,
                     })
-                    this.getAppData(this.props.data.userId,pagination.current,this.state.pageSize);
-                    
+                    this.getAppData(this.props.data.userId, pagination.current, this.state.pageSize);
+
                   }}
                   dataSource={dataSource}
                   columns={columns}
@@ -208,9 +208,9 @@ class AppPage extends Component {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={()=>{
-                console.log('准备提交')
-                this.postAppInfo(this.props.data.userId,this.state.AppEUI,this.state.name);
+            <Button color="primary" onClick={() => {
+              console.log('准备提交')
+              this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name);
             }}>确认</Button>{' '}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>
           </ModalFooter>
@@ -222,17 +222,17 @@ class AppPage extends Component {
 }
 
 function mapStateToProps(state) {
-    return {
-      data: state,
-    };
-  }
-  
-  function mapDispatchToProps(dispatch) {
-    return bindActionCreators({}, dispatch);
-  }
-  
-  export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(AppPage);
+  return {
+    data: state,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({}, dispatch);
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppPage);
 

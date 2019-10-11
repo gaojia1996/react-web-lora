@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from "react-redux";
 import store from './redux/index';
-import Auth from './auth/Auth';
 import './App.scss';
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
@@ -23,7 +22,6 @@ class App extends Component {
       <Provider store={store}>
         <HashRouter>
           <React.Suspense fallback={loading()}>
-            <Auth></Auth>
             <Switch>
               <Route exact path="/login" name="Login Page" render={props => <Login {...props} />} />
               <Route exact path="/register" name="Register Page" render={props => <Register {...props} />} />

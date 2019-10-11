@@ -10,34 +10,34 @@ class GatewayData extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageSize:10,
-      currentPage:1,
-      data:{
-        count:0,
-        rows:[],
+      pageSize: 10,
+      currentPage: 1,
+      data: {
+        count: 0,
+        rows: [],
       },
     };
   }
   componentDidMount() {
-    this.getGatewayCommunicateData(this.props.match.params.gatewayId,this.state.currentPage,this.state.pageSize);
+    this.getGatewayCommunicateData(this.props.match.params.gatewayId, this.state.currentPage, this.state.pageSize);
   }
-  getGatewayCommunicateData(gatewayId,pageNumber,pageSize) {
- 
-    getDataFuncs.getGatewayCommunicateDataFunc(gatewayId,pageNumber,pageSize)
-    .then(res=>{
-      console.log('the res is ',res)
-     this.setState({
-      data:res
-     })
-        
-    })
-    .catch(()=>{console.log('获取网关通信数据错误');})
+  getGatewayCommunicateData(gatewayId, pageNumber, pageSize) {
+
+    getDataFuncs.getGatewayCommunicateDataFunc(gatewayId, pageNumber, pageSize)
+      .then(res => {
+        console.log('the res is ', res)
+        this.setState({
+          data: res
+        })
+
+      })
+      .catch(() => { console.log('获取网关通信数据错误'); })
     // alert('获取一次数据');
-  
-}
+
+  }
   render() {
-    console.log('the pams is ',this.props.match);
-    console.log('the data of subpage is ',this.state.data);
+    console.log('the pams is ', this.props.match);
+    console.log('the data of subpage is ', this.state.data);
     // console.log('the id is', this.props.location.state.oneGatewayId);
     // const gatewayId = this.props.location.state.oneGatewayId;
     // const pagination = {
@@ -45,26 +45,26 @@ class GatewayData extends Component {
     //   total: 1,
     //   pageSize: 10,
     // }
-    const dataSource = this.state.data['rows'].map((each)=>{
+    const dataSource = this.state.data['rows'].map((each) => {
       return ({
-          rxnb:each['rxnb'],
-          rxok:each['rxok'],
-          rxfw:each['rxfw'],
-          ackr:each['ackr'] + '%',
-          dwnb:each['dwnb'],
-          // timestamp:new Date(each['updatedAt']).toLocaleString()
-          txnb:each['txnb'],
-          timestamp:moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
+        rxnb: each['rxnb'],
+        rxok: each['rxok'],
+        rxfw: each['rxfw'],
+        ackr: each['ackr'] + '%',
+        dwnb: each['dwnb'],
+        // timestamp:new Date(each['updatedAt']).toLocaleString()
+        txnb: each['txnb'],
+        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
       })
-  })
-  console.log('the datasource is ',dataSource);
+    })
+    console.log('the datasource is ', dataSource);
     const columns = [
       {
         title: '时间',
         dataIndex: 'timestamp',
         key: 'timestamp',
         width: '10%',
-        render: timestamp =>timestamp,
+        render: timestamp => timestamp,
       },
       {
         title: '接收无线数据包',
@@ -116,7 +116,7 @@ class GatewayData extends Component {
             <Card>
               <CardHeader className="h3 bg-teal">
                 网关ID:{this.props.match.params.gatewayId}
-              
+
                 {/* 网关ID:{'this.props.match.params.gatewayId'} */}
               </CardHeader>
               <CardBody>
@@ -129,16 +129,16 @@ class GatewayData extends Component {
                       <CardBody>
                         <Table
                           pagination={{
-                            pageSize:this.state.pageSize,
-                            total:this.state.data['count'],
-                            current:this.state.currentPage,
+                            pageSize: this.state.pageSize,
+                            total: this.state.data['count'],
+                            current: this.state.currentPage,
 
                           }}
-                          onChange={(pagination)=>{
+                          onChange={(pagination) => {
                             this.setState(
-                              {currentPage:pagination.current}
+                              { currentPage: pagination.current }
                             );
-                            this.getGatewayCommunicateData(testGatewayId,pagination.current,this.state.pageSize);
+                            this.getGatewayCommunicateData(testGatewayId, pagination.current, this.state.pageSize);
                           }}
                           dataSource={dataSource}
                           columns={columns}

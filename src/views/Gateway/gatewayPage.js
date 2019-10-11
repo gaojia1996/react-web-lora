@@ -7,8 +7,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import qs from 'query-string'
 import config from '../../config.js'
-import{
-  getGatewayInfo,selectedGateway,
+import {
+  getGatewayInfo, selectedGateway,
 } from '../../redux/actions/action_gateway'
 const baseUrl = config.dataUrl;
 class GatewayPage extends Component {
@@ -21,8 +21,8 @@ class GatewayPage extends Component {
       frequency: "Asia 920-923MHz",
       model: "X01",
       location: null,
-      isDataSourceUpdated:false,
-      pageSize:4,
+      isDataSourceUpdated: false,
+      pageSize: 4,
     };
     this.handleToggle = this.handleToggle.bind(this);
     this.handleGatewayId = this.handleGatewayId.bind(this);
@@ -31,8 +31,8 @@ class GatewayPage extends Component {
     this.handleModel = this.handleModel.bind(this);
     this.handleLocation = this.handleLocation.bind(this);
   }
-  componentDidMount(){
-    this.props.getGatewayInfo(this.props.data.userId,this.props.data.currentPageOfGateway,this.state.pageSize);
+  componentDidMount() {
+    this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
   }
   handleToggle() {
     this.setState({
@@ -64,59 +64,59 @@ class GatewayPage extends Component {
       location: event.target.value,
     })
   }
-  handlePost(){}
-  postGatewayInfo(id, type, frequency,model,location) {
+  handlePost() { }
+  postGatewayInfo(id, type, frequency, model, location) {
     const Url = baseUrl + '/gateway';
     var data = {
-      userID:this.props.data.userId,
-      gatewayId:id,
-      type:type,
-      frequencyPlan:frequency,
-      model:model,
-      location:location
+      userID: this.props.data.userId,
+      gatewayId: id,
+      type: type,
+      frequencyPlan: frequency,
+      model: model,
+      location: location
     }
-    fetch(Url,{
-      method:'POST',
+    fetch(Url, {
+      method: 'POST',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body:qs.stringify(data),
-    }).then(responce=>responce.json())
-    .then(res=>{
-      if(res.code===200){
-        console.log('网关创建成功');
-        alert('创建网关成功');
-        this.handleToggle()
-      }else if(res.code===400){
-        console.log('网关创建失败');
-      }else if(res.code===3111){
-        console.log('创建失败，请先输入gatewayId');
-        console.log('the res code is ',res.code);
-        console.log('the res is ',res)
-        alert("创建失败，请先输入gatewayId");
-      }else if(res.code===2106){
+      body: qs.stringify(data),
+    }).then(responce => responce.json())
+      .then(res => {
+        if (res.code === 200) {
+          console.log('网关创建成功');
+          alert('创建网关成功');
+          this.handleToggle()
+        } else if (res.code === 400) {
+          console.log('网关创建失败');
+        } else if (res.code === 3111) {
+          console.log('创建失败，请先输入gatewayId');
+          console.log('the res code is ', res.code);
+          console.log('the res is ', res)
+          alert("创建失败，请先输入gatewayId");
+        } else if (res.code === 2106) {
           alert("创建失败，请输入正确格式的网关ID")
-      }else if(res.code===3401){
+        } else if (res.code === 3401) {
           alert('创建失败，该网关已经存在');
-      }else if(res.code===3102) {
+        } else if (res.code === 3102) {
           alert("该用户还没有注册，请先注册用户");
-      }else{
+        } else {
           alert('网关创建失败');
-      }
-    })
+        }
+      })
   }
-   
+
   render() {
-    const dataSource = this.props.data.gatewayInfo.map((each)=>{
-        return ({
-            gatewayId:each['gatewayId'],
-            frequencyPlan:each['frequencyPlan'],
-            location:each['location'],
-            model:each['model'],
-            type:each['type'],
-            // timestamp:new Date(each['updatedAt']).toLocaleString()
-            timestamp:moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
-        })
+    const dataSource = this.props.data.gatewayInfo.map((each) => {
+      return ({
+        gatewayId: each['gatewayId'],
+        frequencyPlan: each['frequencyPlan'],
+        location: each['location'],
+        model: each['model'],
+        type: each['type'],
+        // timestamp:new Date(each['updatedAt']).toLocaleString()
+        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
+      })
     })
     const columns = [
       {
@@ -124,15 +124,16 @@ class GatewayPage extends Component {
         dataIndex: 'gatewayId',
         key: 'gatewayId',
         width: '10%',
-      render: (gatewayId) =>{
-        // this.props.selectedGateway(gatewayId);
-        return <Link to={
+        render: (gatewayId) => {
+          // this.props.selectedGateway(gatewayId);
+          return <Link to={
             {
-                pathname:`/gateway/${gatewayId}/data`,
-                
-                // state:{oneGatewayId:gatewayId}
+              pathname: `/gateway/${gatewayId}/data`,
+
+              // state:{oneGatewayId:gatewayId}
             }
-        }>{gatewayId}</Link>},
+          }>{gatewayId}</Link>
+        },
       },
       {
         title: '类型',
@@ -174,7 +175,7 @@ class GatewayPage extends Component {
     // console.log('the data is ', this.props.data);
     console.log('the data is ', this.props.data);
     return (
-        
+
       <div className="animated fadeIn">
         <Row>
           <Col>
@@ -188,24 +189,24 @@ class GatewayPage extends Component {
               </CardHeader>
               <CardBody>
                 <Table
-                //   pagination={pagination}
+                  //   pagination={pagination}
                   pagination={
-                      {
-                          pageSize:this.state.pageSize,
-                          total:this.props.data.gatewayNumber,
-                          current:this.props.data.currentPageOfGateway
-                        
-                      }
-                  }
-                //   onChange={this.handleChange}
-                  onChange={(pagination)=>{
-                      this.setState({
-                          currentPage:pagination.current,
-                      });
-                      this.props.getGatewayInfo(this.props.data.userId,pagination.current,this.state.pageSize);
+                    {
+                      pageSize: this.state.pageSize,
+                      total: this.props.data.gatewayNumber,
+                      current: this.props.data.currentPageOfGateway
 
-                    }}
-                //   dataSource={dataSource}
+                    }
+                  }
+                  //   onChange={this.handleChange}
+                  onChange={(pagination) => {
+                    this.setState({
+                      currentPage: pagination.current,
+                    });
+                    this.props.getGatewayInfo(this.props.data.userId, pagination.current, this.state.pageSize);
+
+                  }}
+                  //   dataSource={dataSource}
                   dataSource={dataSource}
                   columns={columns}
                   rowKey={record => record.timestamp}
@@ -290,11 +291,11 @@ class GatewayPage extends Component {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={()=>{
-                   console.log('gatewayod is ',this.state.gatewayId)
-                   this.postGatewayInfo(this.state.gatewayId,this.state.type,this.state.frequency,this.state.model,this.state.location);
-                   
-            }   
+            <Button color="primary" onClick={() => {
+              console.log('gatewayod is ', this.state.gatewayId)
+              this.postGatewayInfo(this.state.gatewayId, this.state.type, this.state.frequency, this.state.model, this.state.location);
+
+            }
             }>确认</Button>{' '}
             {/* <Button color="primary" onClick={this.handleToggle}>确认</Button>{' '} */}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>
@@ -306,16 +307,16 @@ class GatewayPage extends Component {
 }
 
 function mapStateToProps(state) {
-    return {
-      data: state,
-    };
-  }
-  
-  function mapDispatchToProps(dispatch) {
-    return bindActionCreators({getGatewayInfo,selectedGateway }, dispatch);
-  }
-  
-  export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(GatewayPage);
+  return {
+    data: state,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getGatewayInfo, selectedGateway }, dispatch);
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GatewayPage);

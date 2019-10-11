@@ -14,14 +14,14 @@ const initialState = {
   devicesPageCurrent: 1, //设备列表当前页码
   devicesFetch: false, //设备列表数据获取标志
   devicesTableItem: [], //设备列表内容
-  
-  gatewayInfo:[],//所有的网关信息
-  gatewayNumber:0,
-  currentPageOfGateway:1,
-  selectedGateway:null,
-  gatewayCommuData:[],
-  gatewayCommuNumber:0,
-  pageSize:1
+
+  gatewayInfo: [],//所有的网关信息
+  gatewayNumber: 0,
+  currentPageOfGateway: 1,
+  selectedGateway: null,
+  gatewayCommuData: [],
+  gatewayCommuNumber: 0,
+  pageSize: 1
 }
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -86,25 +86,25 @@ export default (state = initialState, action) => {
     }
     //by j
     //获取网关id
-    case "GET_GATEWAY_INFO":{
+    case "GET_GATEWAY_INFO": {
       return {
         ...state,
-        gatewayInfo:action.gatewayInfo,
-        gatewayNumber:action.gatewayNumber,
-        currentPageOfGateway:action.currentPageOfGateway,
+        gatewayInfo: action.gatewayInfo,
+        gatewayNumber: action.gatewayNumber,
+        currentPageOfGateway: action.currentPageOfGateway,
       }
     }
-    case "SELECTED_GATEWAY":{
+    case "SELECTED_GATEWAY": {
       return {
         ...state,
-        selectedGateway:action.gatewayId,
+        selectedGateway: action.gatewayId,
       }
     }
-    case "GET_GATEWAY_COMMU_DATA":{
+    case "GET_GATEWAY_COMMU_DATA": {
       return {
         ...state,
-        gatewayCommuData:action.gatewayCommuData,
-        gatewayCommuNumber:action.gatewayCommuNumber,
+        gatewayCommuData: action.gatewayCommuData,
+        gatewayCommuNumber: action.gatewayCommuNumber,
       }
     }
 
@@ -150,8 +150,24 @@ export default (state = initialState, action) => {
         devicesPagecount: action.total,
       }
     }
-
-
+    case "APPLICATION_CHANGE": {
+      var applicationChange = state.applicationChoose;
+      for (var i = 0; i < state.applicationInfo.length; i++) {
+        if (state.applicationInfo[i]['AppEUI'] === action.applicationChoose) {
+          applicationChange = state.applicationInfo[i];
+        }
+      }
+      return {
+        ...state,
+        applicationChoose: applicationChange,
+      }
+    }
+    case "DEVICES_CHANGE_CURRENT_PAGE": {
+      return {
+        ...state,
+        devicesPageCurrent: action.devicesPageCurrent,
+      }
+    }
     default:
       break;
   }
