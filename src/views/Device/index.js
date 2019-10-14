@@ -277,8 +277,7 @@ class Index extends Component {
     }
   }
   componentDidMount() { //第一次加载第一位应用下的设备数据
-    const devicesPageCurrent = 1;
-    this.props.devicesFirst(this.props.data.userId, devicesPageCurrent, this.props.data.devicesPagesize);
+    this.props.devicesFirst(this.props.data.userId, this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
   }
   render() {
     const pagination = {

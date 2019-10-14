@@ -22,7 +22,7 @@ class GatewayPage extends Component {
       model: "X01",
       location: null,
       isDataSourceUpdated: false,
-      pageSize: 5,
+      pageSize: 8,
     };
     this.handleToggle = this.handleToggle.bind(this);
     this.handleGatewayId = this.handleGatewayId.bind(this);

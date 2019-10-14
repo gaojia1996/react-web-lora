@@ -9,7 +9,7 @@ const initialState = {
   applicationFetch: false, //获取用户应用标识
   applicationInfo: [], //选择应用按钮的应用信息
   applicationChoose: {}, //选择应用select的选中值
-  devicesPagesize: 10, //设备列表分页页数
+  devicesPagesize: 8, //设备列表分页页数
   devicesPagecount: 0, //设备列表的所有数据
   devicesPageCurrent: 1, //设备列表当前页码
   devicesFetch: false, //设备列表数据获取标志

@@ -10,7 +10,7 @@ class GatewayData extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageSize: 5,
+      pageSize: 8,
       currentPage: 1,
       data: {
         count: 0,
