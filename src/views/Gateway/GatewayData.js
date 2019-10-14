@@ -10,7 +10,7 @@ class GatewayData extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageSize: 10,
+      pageSize: 5,
       currentPage: 1,
       data: {
         count: 0,
@@ -25,7 +25,7 @@ class GatewayData extends Component {
 
     getDataFuncs.getGatewayCommunicateDataFunc(gatewayId, pageNumber, pageSize)
       .then(res => {
-        console.log('the res is ', res)
+        // console.log('the res is ', res)
         this.setState({
           data: res
         })
@@ -36,8 +36,8 @@ class GatewayData extends Component {
 
   }
   render() {
-    console.log('the pams is ', this.props.match);
-    console.log('the data of subpage is ', this.state.data);
+    // console.log('the pams is ', this.props.match);
+    // console.log('the data of subpage is ', this.state.data);
     // console.log('the id is', this.props.location.state.oneGatewayId);
     // const gatewayId = this.props.location.state.oneGatewayId;
     // const pagination = {
@@ -54,10 +54,10 @@ class GatewayData extends Component {
         dwnb: each['dwnb'],
         // timestamp:new Date(each['updatedAt']).toLocaleString()
         txnb: each['txnb'],
-        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
+        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
       })
     })
-    console.log('the datasource is ', dataSource);
+    // console.log('the datasource is ', dataSource);
     const columns = [
       {
         title: '时间',

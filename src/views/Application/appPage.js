@@ -16,7 +16,7 @@ class AppPage extends Component {
       modal: false,
       name: null,
       AppEUI: this.getRandom(16),
-      pageSize: 3,
+      pageSize: 5,
       currentPage: 1,
       data: {
         count: 0,
@@ -34,7 +34,7 @@ class AppPage extends Component {
 
     getDataFuncs.getAppInfo(userId, pageNumber, pageSize)
       .then(res => {
-        console.log('the appInfo in this page is ', res)
+        // console.log('the appInfo in this page is ', res)
         this.setState({
           data: res
         })
@@ -57,7 +57,7 @@ class AppPage extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          console.log('应用创建成功');
+          // console.log('应用创建成功');
           alert('成功创建应用');
           this.handleToggle();
           const temp_data = this.state.data;
@@ -79,8 +79,8 @@ class AppPage extends Component {
         }
         else {
           alert('创建失败,遇到其它未知的错误');
-          console.log('the res code is ', res.code);
-          console.log('the res is ', res);
+          // console.log('the res code is ', res.code);
+          // console.log('the res is ', res);
           this.handleToggle();
         }
       })
@@ -112,14 +112,14 @@ class AppPage extends Component {
 
   }
   render() {
-    console.log('the app data is ', this.props.data);
+    // console.log('the app data is ', this.props.data);
 
 
     const dataSource = this.state.data['rows'].map((each) => {
       return ({
         name: each['name'],
         AppEUI: each['AppEUI'],
-        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
+        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
       })
     })
 
@@ -209,7 +209,7 @@ class AppPage extends Component {
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-              console.log('准备提交')
+              // console.log('准备提交')
               this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name);
             }}>确认</Button>{' '}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>

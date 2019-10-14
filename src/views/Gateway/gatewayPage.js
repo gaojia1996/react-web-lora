@@ -22,7 +22,7 @@ class GatewayPage extends Component {
       model: "X01",
       location: null,
       isDataSourceUpdated: false,
-      pageSize: 4,
+      pageSize: 5,
     };
     this.handleToggle = this.handleToggle.bind(this);
     this.handleGatewayId = this.handleGatewayId.bind(this);
@@ -39,6 +39,7 @@ class GatewayPage extends Component {
       modal: !this.state.modal,
     });
   }
+  //just a test text
   handleGatewayId(event) {
     this.setState({
       gatewayId: event.target.value,
@@ -84,16 +85,16 @@ class GatewayPage extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          console.log('网关创建成功');
+          // console.log('网关创建成功');
           alert('创建网关成功');
           this.handleToggle()
         } else if (res.code === 400) {
-          console.log('网关创建失败');
-        } else if (res.code === 3111) {
-          console.log('创建失败，请先输入gatewayId');
-          console.log('the res code is ', res.code);
-          console.log('the res is ', res)
-          alert("创建失败，请先输入gatewayId");
+          // console.log('网关创建失败');
+        } else if (res.code === 3109) {
+          // console.log('创建失败，请先输入gatewayId');
+          // console.log('the res code is ', res.code);
+          // console.log('the res is ', res)
+          alert("创建失败，请填写完整的信息");
         } else if (res.code === 2106) {
           alert("创建失败，请输入正确格式的网关ID")
         } else if (res.code === 3401) {
@@ -101,7 +102,9 @@ class GatewayPage extends Component {
         } else if (res.code === 3102) {
           alert("该用户还没有注册，请先注册用户");
         } else {
-          alert('网关创建失败');
+          alert('网关创建失败,未知问题');
+          console.log('the res code is ', res.code);
+          console.log('the res is ', res)
         }
       })
   }
@@ -115,7 +118,7 @@ class GatewayPage extends Component {
         model: each['model'],
         type: each['type'],
         // timestamp:new Date(each['updatedAt']).toLocaleString()
-        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD hh:mm:ss'),
+        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
       })
     })
     const columns = [
@@ -173,7 +176,7 @@ class GatewayPage extends Component {
       },
     ];
     // console.log('the data is ', this.props.data);
-    console.log('the data is ', this.props.data);
+    // console.log('the data is ', this.props.data);
     return (
 
       <div className="animated fadeIn">
@@ -292,7 +295,7 @@ class GatewayPage extends Component {
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-              console.log('gatewayod is ', this.state.gatewayId)
+              // console.log('gatewayod is ', this.state.gatewayId)
               this.postGatewayInfo(this.state.gatewayId, this.state.type, this.state.frequency, this.state.model, this.state.location);
 
             }

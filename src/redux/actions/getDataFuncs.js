@@ -5,7 +5,7 @@ import config from '../../config.js'
 const baseUrl = config.dataUrl;
 function getGatewayInfoFunc(userId,pageNumber,pageSize) {
     const Url = baseUrl + '/gateway?userID=' + userId + '&from=' + pageNumber + '&size=' + pageSize;
-    console.log('the url is ',Url)
+    // console.log('the url is ',Url)
     return fetch(Url, {
         accept: "application/json",
         mode: 'cors',
@@ -30,7 +30,7 @@ function getGatewayInfoFunc(userId,pageNumber,pageSize) {
 
 function getGatewayCommunicateDataFunc(gatewayId,pageNumber,pageSize) {
   const Url = baseUrl + '/gateway/' + gatewayId + '/data?from=' + pageNumber + '&size=' + pageSize;
-  console.log(Url);
+  // console.log(Url);
   return fetch(Url, {
     accept: "application/json",
     mode: 'cors',

@@ -7,7 +7,7 @@ export function getGatewayInfo(userId,pageNumber,pageSize) {
         getDataFuncs.getGatewayInfoFunc(userId,pageNumber,pageSize)
           .then(res => {
 
-            console.log('the res of gatewayData is ',res);
+            // console.log('the res of gatewayData is ',res);
             dispatch({
               type:"GET_GATEWAY_INFO",
               gatewayInfo:res['rows']!==null?res['rows']:[],
@@ -53,7 +53,7 @@ export function getGatewayCommunicateData(gatewayId,pageNumber,pageSize) {
  
     getDataFuncs.getGatewayCommunicateData(gatewayId,pageNumber,pageSize)
     .then(res=>{
-      console.log('the res is ',res)
+      // console.log('the res is ',res)
       return(res['rows']!==null?res['rows']:[]);
         
     })
