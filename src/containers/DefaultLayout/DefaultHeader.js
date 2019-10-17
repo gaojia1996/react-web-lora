@@ -51,10 +51,10 @@ class DefaultHeader extends Component {
           ) : (
               <React.Fragment >
                 <NavItem className="d-md-down-none" >
-                  <Link to="/login" replace>登录</Link>
+                  <Link to="/login" replace className="mystyle">登录</Link>
                 </NavItem>
                 <NavItem className="d-md-down-none" >
-                  <Link to="/register" replace>注册</Link>
+                  <Link to="/register" replace className="mystyle">注册</Link>
                 </NavItem>
                 <NavItem className="d-md-down-none">
                 </NavItem>

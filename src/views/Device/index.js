@@ -14,25 +14,35 @@ class Index extends Component {
     this.state = {
       modal: false,
       modalSelect: false,
-      activationMode: "OTAA",
-      protocolVersion: "1.0.2",
+      name: " ", //设备名称
+      nameValid: false,
+      activationMode: "OTAA", //设备激活模式
+      protocolVersion: "1.0.2", //loraWAN 版本
       DevEUI: this.getRandom(16), //FIX ME
+      DevEUIValid: true,
       AppKey: this.getRandom(32),//FIX ME
-      frequencyPlan: "433 MHz",
+      AppKeyValid: true,
+      frequencyPlan: "433", //使用的频率
       DevAddr: this.getRandom(8), //FIX ME
+      DevAddrValid: true,
       AppSKey: this.getRandom(32), //FIX ME
+      AppSKeyValid: true,
       NwkSKey: this.getRandom(32), //FIX ME
+      NwkSKeyValid: true,
+      Description: " ", //设备描述
     };
     this.handleToggle = this.handleToggle.bind(this);
     this.handleToggleSelect = this.handleToggleSelect.bind(this);
+    this.handleName = this.handleName.bind(this);
     this.handleActivationMode = this.handleActivationMode.bind(this);
-    this.handleDevEUI = this.handleDevEUI.bind(this);
     this.handleProtocolVersion = this.handleProtocolVersion.bind(this);
+    this.handleDevEUI = this.handleDevEUI.bind(this);
     this.handleAppKey = this.handleAppKey.bind(this);
     this.handleFrequencyPlan = this.handleFrequencyPlan.bind(this);
     this.handleDevAddr = this.handleDevAddr.bind(this);
     this.handleAppSKey = this.handleAppSKey.bind(this);
     this.handleNwkSKey = this.handleNwkSKey.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
     this.handleAppChange = this.handleAppChange.bind(this);
     this.handlePost = this.handlePost.bind(this);
   }
@@ -54,6 +64,12 @@ class Index extends Component {
       modalSelect: !this.state.modalSelect,
     });
   }
+  handleName(event) {
+    this.setState({
+      name: event.target.value,
+      nameValid: event.target.value === " " ? false : true,
+    });
+  }
   handleActivationMode(event) {
     this.setState({
       activationMode: event.target.value,
@@ -65,13 +81,17 @@ class Index extends Component {
     });
   }
   handleDevEUI(event) {
+    const regexp = /[0-9a-fA-F]{16}/;
     this.setState({
       DevEUI: event.target.value,
+      DevEUIValid: regexp.test(event.target.value) ? true : false,
     });
   }
   handleAppKey(event) {
+    const regexp = /[0-9a-fA-F]{32}/;
     this.setState({
       AppKey: event.target.value,
+      AppSKeyValid: regexp.test(event.target.value) ? true : false,
     });
   }
   handleFrequencyPlan(event) {
@@ -80,18 +100,29 @@ class Index extends Component {
     });
   }
   handleDevAddr(event) {
+    const regexp = /[0-9a-fA-F]{8}/;
     this.setState({
       DevAddr: event.target.value,
+      DevAddrValid: regexp.test(event.target.value) ? true : false,
     });
   }
   handleAppSKey(event) {
+    const regexp = /[0-9a-fA-F]{32}/;
     this.setState({
       AppSKey: event.target.value,
+      AppSKeyValid: regexp.test(event.target.value) ? true : false,
     });
   }
   handleNwkSKey(event) {
+    const regexp = /[0-9a-fA-F]{32}/;
     this.setState({
       NwkSKey: event.target.value,
+      NwkSKeyValid: regexp.test(event.target.value) ? true : false,
+    });
+  }
+  handleDescription(event) {
+    this.setState({
+      Description: event.target.value,
     });
   }
   handleAppChange(event) { //选择应用按钮 选择应用之后显示相应应用下的设备数据
@@ -103,17 +134,29 @@ class Index extends Component {
   }
   handlePost() {
     if (this.state.activationMode === "OTAA") {
-      fetchData.device(this.props.data.applicationChoose['AppEUI'], this.state.DevEUI, this.state.AppKey, this.state.protocolVersion)
+      fetchData.device(this.props.data.applicationChoose['AppEUI'], this.state.DevEUI, this.state.AppKey, this.state.protocolVersion,
+        this.state.name, this.state.Description)
         .then((res) => {
           if (res.code === 200) {
             alert("成功创建OTAA设备~");
             this.setState({ //关闭创建设备模态框
               modal: !this.state.modal,
+              name: " ", //设备名称
+              nameValid: false,
+              activationMode: "OTAA", //设备激活模式
+              protocolVersion: "1.0.2", //loraWAN 版本
               DevEUI: this.getRandom(16), //FIX ME
+              DevEUIValid: true,
               AppKey: this.getRandom(32),//FIX ME
+              AppKeyValid: true,
+              frequencyPlan: "433", //使用的频率
               DevAddr: this.getRandom(8), //FIX ME
+              DevAddrValid: true,
               AppSKey: this.getRandom(32), //FIX ME
+              AppSKeyValid: true,
               NwkSKey: this.getRandom(32), //FIX ME
+              NwkSKeyValid: true,
+              Description: " ", //设备描述
             });
             this.props.app2device(this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
           } else {
@@ -128,7 +171,7 @@ class Index extends Component {
       var RX2Freq = 434.665;
       var RX2DataRate = 0;
       var MaxEIRP = 12.15;
-      if (this.state.frequencyPlan === "915 MHz") {
+      if (this.state.frequencyPlan === "915") {
         ChMask = 'FF00000000000000FF';
         CFList = '7CC5687CBD987CB5C87CADF87CA6287C9E587C96887C8EB8';
         ChDrRange = '5050505050505050';
@@ -137,7 +180,7 @@ class Index extends Component {
         RX2DataRate = 8;
         MaxEIRP = 30;
       }
-      else if (this.state.frequencyPlan === "868 MHz") {
+      else if (this.state.frequencyPlan === "868") {
         ChMask = '00FF';
         CFList = '756A987562C8755AF8755328754B58754388753BB87533E8';
         ChDrRange = '5050505050505050';
@@ -146,7 +189,7 @@ class Index extends Component {
         RX2DataRate = 0;
         MaxEIRP = 16;
       }
-      else if (this.state.frequencyPlan === "787 MHz") {
+      else if (this.state.frequencyPlan === "787") {
         ChMask = '00FF';
         CFList = '67E5A867DDD867D60867CE3867c66867BE9867B6C867AEF8';
         ChDrRange = '5050505050505050';
@@ -158,17 +201,29 @@ class Index extends Component {
       const ADR = 0;
       const DevNonce = this.getRandom(4);
       fetchData.deviceAbp(this.props.data.applicationChoose['AppEUI'], this.state.DevEUI, this.state.DevAddr, this.state.AppSKey, this.state.NwkSKey,
-        this.state.protocolVersion, this.state.frequencyPlan, ChMask, CFList, ChDrRange, RX1CFList, RX2Freq, RX2DataRate, MaxEIRP, ADR, DevNonce)
+        this.state.protocolVersion, this.state.frequencyPlan, ChMask, CFList, ChDrRange, RX1CFList, RX2Freq, RX2DataRate, MaxEIRP, ADR, DevNonce,
+        this.state.name, this.state.Description)
         .then((res) => {
           if (res.code === 200) {
             alert("成功创建ABP设备~");
             this.setState({ //关闭创建设备模态框
               modal: !this.state.modal,
+              name: " ", //设备名称
+              nameValid: false,
+              activationMode: "OTAA", //设备激活模式
+              protocolVersion: "1.0.2", //loraWAN 版本
               DevEUI: this.getRandom(16), //FIX ME
+              DevEUIValid: true,
               AppKey: this.getRandom(32),//FIX ME
+              AppKeyValid: true,
+              frequencyPlan: "433", //使用的频率
               DevAddr: this.getRandom(8), //FIX ME
+              DevAddrValid: true,
               AppSKey: this.getRandom(32), //FIX ME
+              AppSKeyValid: true,
               NwkSKey: this.getRandom(32), //FIX ME
+              NwkSKeyValid: true,
+              Description: " ", //设备描述
             });
             this.props.app2device(this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
           } else {
@@ -182,6 +237,21 @@ class Index extends Component {
     this.props.changeCurrentPage(page.current);
     this.props.app2device(this.props.data.applicationChoose['AppEUI'], page.current, this.props.data.devicesPagesize);
   }
+  handleDeleteDevice(DevEUI) {
+    fetchData.deviceDelete(DevEUI)
+      .then((res) => {
+        if (res.code === 200) {
+          alert("设备删除成功~");
+          if (this.props.data.devicesTableItem.length === 1) {
+            this.props.app2device(this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent - 1, this.props.data.devicesPagesize);
+          } else {
+            this.props.app2device(this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
+          }
+        } else {
+          alert(res.message);
+        }
+      })
+  }
   FormItem() {
     if (this.state.activationMode === "OTAA") {
       return (
@@ -193,7 +263,9 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="text" id="DevEUI" name="DevEUI" placeholder="唯一且为8字节长" value={this.state.DevEUI} onChange={this.handleDevEUI} maxLength={16} pattern="[0-9a-fA-F]{0,16}">
+              <Input type="text" id="DevEUI" name="DevEUI" placeholder="唯一且为8字节长" value={this.state.DevEUI}
+                onChange={this.handleDevEUI} maxLength={16} pattern="[0-9a-fA-F]{0,16}" valid={this.state.DevEUIValid}
+                invalid={!this.state.DevEUIValid}>
               </Input>
             </Col>
           </InputGroup>
@@ -204,7 +276,20 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="text" id="AppKey" name="AppKey" placeholder="唯一且为16字节长" value={this.state.AppKey} onChange={this.handleAppKey} maxLength={32} pattern="[0-9a-fA-F]{0,16}">
+              <Input type="text" id="AppKey" name="AppKey" placeholder="唯一且为16字节长" value={this.state.AppKey}
+                onChange={this.handleAppKey} maxLength={32} pattern="[0-9a-fA-F]{0,16}" valid={this.state.AppKeyValid}
+                invalid={!this.state.AppKeyValid}>
+              </Input>
+            </Col>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <Col md="4">
+              <InputGroupText>
+                设备描述：
+              </InputGroupText>
+            </Col>
+            <Col xs="12" md="8">
+              <Input type="textarea" id="description" name="description" placeholder="设备描述，可空" onChange={this.handleDescription}>
               </Input>
             </Col>
           </InputGroup>
@@ -220,11 +305,11 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="select" id="frequencyPlan" name="frequencyPlan" onChange={this.handleFrequencyPlan}>
-                <option value="Asia 920-923MHz">433 MHz</option>
-                <option value="Asia 923-925MHz">787 MHz</option>
-                <option value="Australia 915MHz">868 MHz</option>
-                <option value="China 433MHz">915 MHz</option>
+              <Input type="select" id="frequencyPlan" name="frequencyPlan" onChange={this.handleFrequencyPlan} valid>
+                <option value="433">433 MHz</option>
+                <option value="787">787 MHz</option>
+                <option value="868">868 MHz</option>
+                <option value="915">915 MHz</option>
               </Input>
             </Col>
           </InputGroup>
@@ -235,7 +320,9 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="text" id="DevEUI" name="DevEUI" placeholder="唯一且为8字节长" value={this.state.DevEUI} onChange={this.handleDevEUI} maxLength={16} pattern="[0-9a-fA-F]{0,16}">
+              <Input type="text" id="DevEUI" name="DevEUI" placeholder="唯一且为8字节长" value={this.state.DevEUI}
+                onChange={this.handleDevEUI} maxLength={16} pattern="[0-9a-fA-F]{0,16}" valid={this.state.DevEUIValid}
+                invalid={!this.state.DevEUIValid}>
               </Input>
             </Col>
           </InputGroup>
@@ -246,7 +333,9 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="text" id="DevAddr" name="DevAddr" placeholder="唯一且为4字节长" value={this.state.DevAddr} onChange={this.handleDevAddr} maxLength={8} pattern="[0-9a-fA-F]{0,16}">
+              <Input type="text" id="DevAddr" name="DevAddr" placeholder="唯一且为4字节长" value={this.state.DevAddr}
+                onChange={this.handleDevAddr} maxLength={8} pattern="[0-9a-fA-F]{0,16}" valid={this.state.DevAddrValid}
+                invalid={!this.state.DevAddrValid}>
               </Input>
             </Col>
           </InputGroup>
@@ -257,7 +346,9 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="text" id="AppSKey" name="AppSKey" placeholder="唯一且为16字节长" value={this.state.AppSKey} onChange={this.handleAppSKey} maxLength={32} pattern="[0-9a-fA-F]{0,16}">
+              <Input type="text" id="AppSKey" name="AppSKey" placeholder="唯一且为16字节长" value={this.state.AppSKey}
+                onChange={this.handleAppSKey} maxLength={32} pattern="[0-9a-fA-F]{0,16}" valid={this.state.AppSKeyValid}
+                invalid={!this.state.AppSKeyValid}>
               </Input>
             </Col>
           </InputGroup>
@@ -268,7 +359,20 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="text" id="NwkSKey" name="NwkSKey" placeholder="唯一且为16字节长" value={this.state.NwkSKey} onChange={this.handleNwkSKey} maxLength={32} pattern="[0-9a-fA-F]{0,16}">
+              <Input type="text" id="NwkSKey" name="NwkSKey" placeholder="唯一且为16字节长" value={this.state.NwkSKey}
+                onChange={this.handleNwkSKey} maxLength={32} pattern="[0-9a-fA-F]{0,16}" valid={this.state.NwkSKeyValid}
+                invalid={!this.state.NwkSKeyValid}>
+              </Input>
+            </Col>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <Col md="4">
+              <InputGroupText>
+                设备描述：
+              </InputGroupText>
+            </Col>
+            <Col xs="12" md="8">
+              <Input type="textarea" id="description" name="description" placeholder="设备描述，可空" onChange={this.handleDescription}>
               </Input>
             </Col>
           </InputGroup>
@@ -294,6 +398,13 @@ class Index extends Component {
         render: DevEUI => <Link to={`/device/${DevEUI}/data`}>{DevEUI}</Link>,
       },
       {
+        title: '设备名称',
+        dataIndex: 'name',
+        key: 'name',
+        width: '10%',
+        render: name => (!name || name === "") ? "暂无" : name,
+      },
+      {
         title: '激活模式',
         dataIndex: 'activationMode',
         key: 'activationMode',
@@ -314,26 +425,33 @@ class Index extends Component {
         width: '10%',
         render: DevAddr => (!DevAddr || DevAddr === "") ? "暂无" : DevAddr,
       },
+      // {
+      //   title: 'AES-128密钥',
+      //   dataIndex: 'AppKey',
+      //   key: 'AppKey',
+      //   width: '10%',
+      //   render: AppKey => (!AppKey || AppKey === "") ? "暂无" : AppKey,
+      // },
+      // {
+      //   title: '网络会话密钥',
+      //   dataIndex: 'NwkSKey',
+      //   key: 'NwkSKey',
+      //   width: '10%',
+      //   render: NwkSKey => (!NwkSKey || NwkSKey === "") ? "暂无" : NwkSKey,
+      // },
+      // {
+      //   title: '应用会话密钥',
+      //   dataIndex: 'AppSKey',
+      //   key: 'AppSKey',
+      //   width: '10%',
+      //   render: AppSKey => (!AppSKey || AppSKey === "") ? "暂无" : AppSKey,
+      // },
       {
-        title: 'AES-128密钥',
-        dataIndex: 'AppKey',
-        key: 'AppKey',
+        title: '设备描述',
+        dataIndex: 'description',
+        key: 'description',
         width: '10%',
-        render: AppKey => (!AppKey || AppKey === "") ? "暂无" : AppKey,
-      },
-      {
-        title: '网络会话密钥',
-        dataIndex: 'NwkSKey',
-        key: 'NwkSKey',
-        width: '10%',
-        render: NwkSKey => (!NwkSKey || NwkSKey === "") ? "暂无" : NwkSKey,
-      },
-      {
-        title: '应用会话密钥',
-        dataIndex: 'AppSKey',
-        key: 'AppSKey',
-        width: '10%',
-        render: AppSKey => (!AppSKey || AppSKey === "") ? "暂无" : AppSKey,
+        render: description => (!description || description === "") ? "暂无" : description,
       },
       {
         title: '创建时间',
@@ -341,6 +459,13 @@ class Index extends Component {
         key: 'createdAt',
         width: '10%',
         render: createdAt => moment(createdAt).format('YYYY-MM-DD HH:mm:ss'),
+      },
+      {
+        title: '操作',
+        dataIndex: 'DevEUI',
+        key: 'action',
+        width: '5%',
+        render: DevEUI => <Button color="danger" onClick={() => { this.handleDeleteDevice(DevEUI); }}>删除</Button>,
       }
     ];
     return (
@@ -370,20 +495,19 @@ class Index extends Component {
           </Col>
         </Row>
 
-        <Modal isOpen={this.state.modal} toggle={this.handleToggle} key="device_create">
+        <Modal isOpen={this.state.modal} toggle={this.handleToggle} key="device_create" >
           <ModalHeader toggle={this.handleToggle}>创建设备</ModalHeader>
           <ModalBody>
             <Form className="form-horizontal">
               <InputGroup className="mb-3">
                 <Col md="4">
                   <InputGroupText>
-                    LoRaWAN版本：
+                    设备名称：
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="8">
-                  <Input type="select" id="protocolVersion" name="protocolVersion" onChange={this.handleProtocolVersion}>
-                    <option value="1.0.2">LoRaWAN 1.0.2</option>
-                    <option value="1.1">LoRaWAN 1.1</option>
+                  <Input type="text" id="name" name="name" placeholder="设备名称，必填" value={this.state.name}
+                    onChange={this.handleName} valid={this.state.nameValid} invalid={!this.state.nameValid}>
                   </Input>
                 </Col>
               </InputGroup>
@@ -394,9 +518,22 @@ class Index extends Component {
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="8">
-                  <Input type="select" id="activationMode" name="activationMode" onChange={this.handleActivationMode}>
+                  <Input type="select" id="activationMode" name="activationMode" onChange={this.handleActivationMode} valid>
                     <option value="OTAA">OTAA</option>
                     <option value="ABP">ABP</option>
+                  </Input>
+                </Col>
+              </InputGroup>
+              <InputGroup className="mb-3">
+                <Col md="4">
+                  <InputGroupText>
+                    LoRaWAN版本：
+                </InputGroupText>
+                </Col>
+                <Col xs="12" md="8">
+                  <Input type="select" id="protocolVersion" name="protocolVersion" onChange={this.handleProtocolVersion} valid>
+                    <option value="1.0.2">LoRaWAN 1.0.2</option>
+                    <option value="1.1">LoRaWAN 1.1</option>
                   </Input>
                 </Col>
               </InputGroup>

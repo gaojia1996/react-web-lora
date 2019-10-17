@@ -1,13 +1,26 @@
 // Here you can add other styles
 .app-header .nav-item .nav-link {
-  font-family: fantasy;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
-.mystyle{
+.mystyle {
   color: #1cc09f;
 }
-.breadcrumb{
+.mystyle:hover {
+  color: #1cc09f;
+}
+.breadcrumb {
   background: #332e73 !important;
 }
-.breadcrumb-item.active{
+.breadcrumb-item.active {
   color: #fff !important;
+}
+.sidebar .nav-link:hover {
+  background: #283643 !important;
+}
+.sidebar .nav-link.active {
+  background: #283643 !important;
+}
+.modal-content {
+  margin-top: 5rem !important;
 }

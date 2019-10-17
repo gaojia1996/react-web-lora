@@ -27,9 +27,12 @@ function login(email, password) { //用户登录接口
     .then(parseJSON);
 }
 
-function device(AppEUI, DevEUI, AppKey, ProtocolVersion) { //设备注册接口 OTAA
+function device(AppEUI, DevEUI, AppKey, ProtocolVersion, name, description) { //设备注册接口 OTAA
   const Url = baseUrl + '/device';
-  const body = { activationMode: "OTAA", AppEUI: AppEUI, DevEUI: DevEUI, AppKey: AppKey, ProtocolVersion: ProtocolVersion };
+  const body = {
+    activationMode: "OTAA", AppEUI: AppEUI, DevEUI: DevEUI, AppKey: AppKey,
+    ProtocolVersion: ProtocolVersion, name: name, description: description,
+  };
   return fetch(Url, {
     method: 'POST',
     headers: {
@@ -41,16 +44,29 @@ function device(AppEUI, DevEUI, AppKey, ProtocolVersion) { //设备注册接口 
 }
 
 function deviceAbp(AppEUI, DevEUI, DevAddr, AppSKey, NwkSKey, ProtocolVersion, frequencyPlan,
-  ChMask, CFList, ChDrRange, RX1CFList, RX2Freq, RX2DataRate, MaxEIRP, ADR, DevNonce) { //设备注册接口 ABP
+  ChMask, CFList, ChDrRange, RX1CFList, RX2Freq, RX2DataRate, MaxEIRP, ADR, DevNonce, name, description) { //设备注册接口 ABP
   const Url = baseUrl + '/device';
   const body = {
     activationMode: "ABP", AppEUI: AppEUI, DevEUI: DevEUI, DevAddr: DevAddr, AppSKey: AppSKey,
     NwkSKey: NwkSKey, ProtocolVersion: ProtocolVersion, frequencyPlan: frequencyPlan, ChMask: ChMask,
     CFList: CFList, ChDrRange: ChDrRange, RX1CFList: RX1CFList, RX2Freq: RX2Freq, RX2DataRate: RX2DataRate,
-    MaxEIRP: MaxEIRP, ADR: ADR, DevNonce: DevNonce,
+    MaxEIRP: MaxEIRP, ADR: ADR, DevNonce: DevNonce, name: name, description: description,
   };
   return fetch(Url, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: queryString.stringify(body),
+  })
+    .then(parseJSON);
+}
+
+function deviceDelete(DevEUI) { //设备删除接口
+  const Url = baseUrl + '/device';
+  const body = { DevEUI: DevEUI, };
+  return fetch(Url, {
+    method: 'DELETE',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
@@ -110,6 +126,6 @@ function parseJSON(response) {
 const fetchData = {
   user, login,
   user2application,
-  device, deviceAbp, app2device, deviceInfo, deviceData,
+  device, deviceAbp, deviceDelete, app2device, deviceInfo, deviceData,
 };
 export default fetchData;
