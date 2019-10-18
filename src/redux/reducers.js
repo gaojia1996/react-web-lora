@@ -141,6 +141,13 @@ export default (state = initialState, action) => {
         applicationChoose: action.data[0],
       }
     }
+    case "GET_APPLICATION_INFO_NO_FIRST": { //存储用户应用数据
+      return {
+        ...state,
+        applicationFetch: true,
+        applicationInfo: action.data,
+      }
+    }
     case "GET_DEVICE_INFO_BY_APPEUI": { //根据应用AppEUI获取一页的设备列表
       return {
         ...state,

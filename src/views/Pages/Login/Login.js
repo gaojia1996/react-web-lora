@@ -10,24 +10,35 @@ class Login extends Component {
     super(props);
     this.state = {
       email: null,
+      emailValid: false,
       password: null,
+      passwordValid: false,
     }
     this.handleEmail = this.handleEmail.bind(this);
     this.handlePassword = this.handlePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleEmail(event) {
+    const reg = new RegExp("^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$");
     this.setState({
       email: event.target.value,
+      emailValid: reg.test(event.target.value) ? true : false,
     });
   }
   handlePassword(event) {
     this.setState({
       password: event.target.value,
+      passwordValid: event.target.value.length < 6 || event.target.value.length > 32 ? false : true,
     });
   }
   handleSubmit() {
-    this.props.userLogin(this.state.email, this.state.password);
+    if (!this.state.emailValid) {
+      alert('邮箱输入有误~');
+    } else if (!this.state.passwordValid) {
+      alert("密码至少6位~至多不超过32位");
+    } else {
+      this.props.userLogin(this.state.email, this.state.password);
+    }
   }
   render() {
     if (this.props.data.userLogin) {
@@ -51,9 +62,9 @@ class Login extends Component {
                             <i className="icon-envelope"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="email" name="email" placeholder="Email" onChange={this.handleEmail} />
+                        <Input type="email" name="email" placeholder="Email" onChange={this.handleEmail} valid={this.state.emailValid} invalid={!this.state.emailValid} />
                       </InputGroup>
-                      {this.state.email === null || this.state.email.length === 0 ? <FormText color="muted">请输入用户邮箱!</FormText> : null}
+                      {/* {this.state.email === null || this.state.email.length === 0 ? <FormText color="muted">请输入用户邮箱!</FormText> : null} */}
                     </FormGroup>
                     <FormGroup>
                       <InputGroup className="mb-4">
@@ -62,15 +73,15 @@ class Login extends Component {
                             <i className="icon-lock"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="password" placeholder="Password" onChange={this.handlePassword} />
+                        <Input type="password" id="password" name="password" placeholder="Password" onChange={this.handlePassword} valid={this.state.passwordValid} invalid={!this.state.passwordValid} />
                       </InputGroup>
-                      {this.state.password === null || this.state.password.length === 0 ? <FormText color="muted">请输入用户密码!</FormText> : null}
+                      {/* {this.state.password === null || this.state.password.length === 0 ? <FormText color="muted">请输入用户密码!</FormText> : null} */}
                     </FormGroup>
                     <Row>
-                      <Col xs="6">
-                        {this.state.password === null || this.state.password.length === 0 || this.state.email === null || this.state.email.length === 0 ?
-                          <Button color="primary" className="px-4" disabled>Login</Button> :
-                          <Button color="primary" className="px-4" onClick={this.handleSubmit}>Login</Button>
+                      <Col xs="12">
+                        {(this.state.emailValid && this.state.passwordValid) ?
+                          <Button color="primary" block onClick={this.handleSubmit}>登录</Button> :
+                          <Button color="primary" block onClick={this.handleSubmit}>登录</Button>
                         }
                       </Col>
                       {/* <Col xs="6" className="text-right">
@@ -86,7 +97,7 @@ class Login extends Component {
                       <h2>注册</h2>
                       <p>暂无账号？欢迎点击注册按钮注册账号</p>
                       <Link to="/register">
-                        <Button color="primary" className="mt-3" active tabIndex={-1} >Register Now!</Button>
+                        <Button color="primary" className="mt-3" active tabIndex={-1} >现在注册!</Button>
                       </Link>
                     </div>
                   </CardBody>

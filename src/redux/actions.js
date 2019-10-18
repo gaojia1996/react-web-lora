@@ -74,6 +74,32 @@ export function devicesFirst(userID, pagecount, pagesize) { //设备管理第一
       });
   };
 }
+export function devicesNoFirst(userID, AppEUI, pagecount, pagesize){
+  return dispatch => {
+    fetchData.user2application(userID)
+      .then((res) => {
+        if (res.count === 0) { //获取的应用为空
+          dispatch({
+            type: "GET_APPLICATION_NULL",
+          });
+        } else { //获取的应用不为空
+          dispatch({
+            type: "GET_APPLICATION_INFO_NO_FIRST",
+            data: res.rows,
+          });
+          fetchData.app2device(AppEUI, pagecount, pagesize) //使用第一个应用的AppEUI获取相应的设备数据
+            .then((res) => {
+              dispatch({
+                type: "GET_DEVICE_INFO_BY_APPEUI",
+                data: res.rows,
+                current: pagecount,
+                total: res.count,
+              });
+            });
+        }
+      });
+  };
+}
 export function applicationChange(AppEUI, pagecount, pagesize) {
   return dispatch => {
     dispatch({

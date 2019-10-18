@@ -4,7 +4,7 @@ import { Table } from 'antd';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
-import { devicesFirst, applicationChange, changeCurrentPage, app2device } from '../../redux/actions';
+import { devicesFirst, devicesNoFirst, applicationChange, changeCurrentPage, app2device } from '../../redux/actions';
 import { bindActionCreators } from "redux";
 import fetchData from '../../redux/fetchData';
 
@@ -67,7 +67,7 @@ class Index extends Component {
   handleName(event) {
     this.setState({
       name: event.target.value,
-      nameValid: event.target.value === " " ? false : true,
+      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" ? false : true,
     });
   }
   handleActivationMode(event) {
@@ -91,7 +91,7 @@ class Index extends Component {
     const regexp = /[0-9a-fA-F]{32}/;
     this.setState({
       AppKey: event.target.value,
-      AppSKeyValid: regexp.test(event.target.value) ? true : false,
+      AppKeyValid: regexp.test(event.target.value) ? true : false,
     });
   }
   handleFrequencyPlan(event) {
@@ -381,7 +381,11 @@ class Index extends Component {
     }
   }
   componentDidMount() { //第一次加载第一位应用下的设备数据
-    this.props.devicesFirst(this.props.data.userId, this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
+    if (!this.props.data.applicationChoose.hasOwnProperty('AppEUI')) {
+      this.props.devicesFirst(this.props.data.userId, this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
+    }else{
+      this.props.devicesNoFirst(this.props.data.userId, this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
+    }
   }
   render() {
     const pagination = {
@@ -451,7 +455,7 @@ class Index extends Component {
         dataIndex: 'description',
         key: 'description',
         width: '10%',
-        render: description => (!description || description === "") ? "暂无" : description,
+        render: description => (!description || description === "" || description === " ") ? "暂无" : description,
       },
       {
         title: '创建时间',
@@ -488,7 +492,7 @@ class Index extends Component {
                   dataSource={this.props.data.devicesTableItem}
                   columns={columns}
                   rowKey={record => record.createdAt}
-                  scroll={{ x: 1600 }}
+                  // scroll={{ x: 1600 }}
                   loading={!this.props.data.devicesFetch} />
               </CardBody>
             </Card>
@@ -541,7 +545,11 @@ class Index extends Component {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.handlePost}>确认</Button>{' '}
+            {this.state.nameValid && this.state.DevEUIValid && this.state.AppKeyValid &&
+              this.state.DevAddrValid && this.state.AppSKeyValid && this.state.NwkSKeyValid
+              ? <Button color="primary" onClick={this.handlePost}>确认</Button>
+              : <Button color="primary" onClick={this.handlePost} disabled>确认</Button>}
+            {' '}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>
           </ModalFooter>
         </Modal>
@@ -586,7 +594,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ devicesFirst, applicationChange, changeCurrentPage, app2device }, dispatch);
+  return bindActionCreators({ devicesFirst, devicesNoFirst, applicationChange, changeCurrentPage, app2device }, dispatch);
 }
 
 export default connect(
