@@ -14,9 +14,12 @@ class AppPage extends Component {
     super(props);
     this.state = {
       modal: false,
+      nameValid: false,
+      euiValid: false,
       name: null,
-      AppEUI: this.getRandom(16),
-      pageSize: 8,
+      // AppEUI: this.getRandom(16),
+      AppEUI: null,
+      pageSize: 7,
       currentPage: 1,
       data: {
         count: 0,
@@ -34,22 +37,19 @@ class AppPage extends Component {
 
     getDataFuncs.getAppInfo(userId, pageNumber, pageSize)
       .then(res => {
-        // console.log('the appInfo in this page is ', res)
         this.setState({
           data: res
         })
       })
       .catch(() => { console.log('获取网关通信数据错误'); })
   }
-  postAppInfo(userId, AppEUI, name) {
+  deleteOneApp(AppEUI) {
     const Url = baseUrl + '/application';
     var data = {
-      userID: userId,
       AppEUI: AppEUI,
-      name: name,
     }
     fetch(Url, {
-      method: 'POST',
+      method: 'DELETE',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
@@ -57,33 +57,59 @@ class AppPage extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          // console.log('应用创建成功');
-          alert('成功创建应用');
-          this.handleToggle();
-          const temp_data = this.state.data;
-          this.setState({
-            data: {
-              ...temp_data,
-              count: temp_data['count'] + 1,
-            }
-          })
-        } else if (res.code === 3108) {
-          alert('名字不能为空，请重新输入');
-        } else if (res.code === 3107) {
-          alert('APPEUI不能为空，请重新输入');
-        } else if (res.code === 2103) {
-          alert('AppEUI格式错误，请重新输入');
-        } else if (res.code === 3201) {
-          alert('创建失败，该应用已经存在');
-          this.handleToggle();
+          alert('删除成功');
+          this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
         }
         else {
-          alert('创建失败,遇到其它未知的错误');
-          // console.log('the res code is ', res.code);
-          // console.log('the res is ', res);
-          this.handleToggle();
+          alert('删除遇到问题');
         }
       })
+      .catch(() => {
+        alert("删除失败，删除请求错误");
+      })
+
+  }
+  postAppInfo(userId, AppEUI, name) {
+    if (this.state.name === null) {
+      alert('应用名称不能为空，请重新输入');
+    } else if (this.state.AppEUI === null || this.state.AppEUI.length !== 16) {
+      alert("AppEUI为16位，请重新输入");
+    } else {
+      const Url = baseUrl + '/application';
+      var data = {
+        userID: userId,
+        AppEUI: AppEUI,
+        name: name,
+      }
+      fetch(Url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: qs.stringify(data),
+      }).then(responce => responce.json())
+        .then(res => {
+          if (res.code === 200) {
+            alert('成功创建应用');
+            this.handleToggle();
+            this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
+          } else if (res.code === 3108) {
+            alert('名字不能为空，请重新输入');
+          } else if (res.code === 3107) {
+            alert('APPEUI不能为空，请重新输入');
+          } else if (res.code === 2103) {
+            alert('AppEUI格式错误，请重新输入');
+          } else if (res.code === 3201) {
+            alert('创建失败，该应用已经存在');
+            this.handleToggle();
+          }
+          else {
+            alert('创建失败,遇到其它未知的错误');
+            this.handleToggle();
+          }
+        })
+    }
+
   }
   getRandom(weishu) {
     var random = '';
@@ -101,20 +127,20 @@ class AppPage extends Component {
   handleName(event) {
     this.setState({
       name: event.target.value,
+      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" ? false : true,
     });
   }
   handleAppEUI(event) {
     this.setState({
       AppEUI: event.target.value,
+      euiValid: event.target.value.length !== 16 || event.target.value === null || event.target.value === "" ? false : true,
     });
   }
   handlePost() {
 
   }
   render() {
-    // console.log('the app data is ', this.props.data);
-
-
+    // console.log('the state is ',this.state)
     const dataSource = this.state.data['rows'].map((each) => {
       return ({
         name: each['name'],
@@ -145,6 +171,23 @@ class AppPage extends Component {
         width: '10%',
         render: timestamp => timestamp,
       },
+      {
+        title: '',
+        dataIndex: 'deleteEach',
+        key: 'deleteEach',
+        width: '10%',
+        // render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
+        render: (text, record, index) => {
+          return (
+            <Button color="danger" onClick={() => {
+              // alert('this is ' + this.state.data['rows'][index]['AppEUI']);
+              if (this.state.data['rows'][index]['AppEUI'] !== undefined) {
+                this.deleteOneApp(this.state.data['rows'][index]['AppEUI']);
+              }
+            }}>删除</Button>
+          )
+        },
+      },
     ];
     return (
       <div className="animated fadeIn">
@@ -161,7 +204,6 @@ class AppPage extends Component {
                 <Table
                   pagination={{
                     pageSize: this.state.pageSize,
-                    //   current:this.state.currentPage,
                     total: this.state.data['count']
                   }}
                   onChange={(pagination) => {
@@ -192,7 +234,8 @@ class AppPage extends Component {
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="9">
-                  <Input type="text" id="name" name="name" placeholder="应用名称" value={this.state.name} onChange={this.handleName} />
+                  <Input type="text" id="name" name="name" placeholder="应用名称" value={this.state.name}
+                    onChange={this.handleName} maxLength={10} valid={this.state.nameValid} invalid={!this.state.nameValid} />
                 </Col>
               </InputGroup>
               <InputGroup className="mb-3">
@@ -202,14 +245,14 @@ class AppPage extends Component {
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="9">
-                  <Input type="text" id="AppEUI" name="AppEUI" placeholder="唯一且为8字节长" value={this.state.AppEUI} onChange={this.handleAppEUI} />
+                  <Input type="text" id="AppEUI" name="AppEUI" placeholder="唯一且为8字节长" value={this.state.AppEUI}
+                    onChange={this.handleAppEUI} maxLength={16} pattern="[0-9a-fA-F]{0,16}" valid={this.state.euiValid} invalid={!this.state.euiValid} />
                 </Col>
               </InputGroup>
             </Form>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-              // console.log('准备提交')
               this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name);
             }}>确认</Button>{' '}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>

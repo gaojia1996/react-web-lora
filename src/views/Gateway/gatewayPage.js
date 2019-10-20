@@ -1,5 +1,7 @@
+// import React, { Component, useDebugValue } from 'react';
 import React, { Component } from 'react';
 import { Button, Card, CardBody, CardHeader, Col, Row, Modal, ModalBody, ModalFooter, ModalHeader, Form, Input, InputGroup, InputGroupText, } from 'reactstrap';
+// import { Table, Descriptions } from 'antd';
 import { Table } from 'antd';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
@@ -16,20 +18,27 @@ class GatewayPage extends Component {
     super(props);
     this.state = {
       modal: false,
+      name: null,
+      nameValid: false,
+      idValid: false,
+      locationValid: false,
       gatewayId: null,
       type: "indoor",
       frequency: "Asia 920-923MHz",
       model: "X01",
       location: null,
+      description: null,
       isDataSourceUpdated: false,
-      pageSize: 8,
+      pageSize: 7,
     };
     this.handleToggle = this.handleToggle.bind(this);
+    this.handleName = this.handleName.bind(this);
     this.handleGatewayId = this.handleGatewayId.bind(this);
     this.handleType = this.handleType.bind(this);
     this.handleFrequency = this.handleFrequency.bind(this);
     this.handleModel = this.handleModel.bind(this);
     this.handleLocation = this.handleLocation.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
   }
   componentDidMount() {
     this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
@@ -39,10 +48,16 @@ class GatewayPage extends Component {
       modal: !this.state.modal,
     });
   }
-  //just a test text
+  handleName(event) {
+    this.setState({
+      name: event.target.value,
+      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" ? false : true,
+    });
+  }
   handleGatewayId(event) {
     this.setState({
       gatewayId: event.target.value,
+      idValid: event.target.value.length !== 16 || event.target.value === null || event.target.value === "" ? false : true,
     });
   }
   handleType(event) {
@@ -63,21 +78,22 @@ class GatewayPage extends Component {
   handleLocation(event) {
     this.setState({
       location: event.target.value,
+      locationValid: event.target.value === " " || event.target.value === null || event.target.value === "" ? false : true,
+    })
+  }
+  handleDescription(event) {
+    this.setState({
+      description: event.target.value,
     })
   }
   handlePost() { }
-  postGatewayInfo(id, type, frequency, model, location) {
+  deleteOneGateway(id) {
     const Url = baseUrl + '/gateway';
     var data = {
-      userID: this.props.data.userId,
       gatewayId: id,
-      type: type,
-      frequencyPlan: frequency,
-      model: model,
-      location: location
     }
     fetch(Url, {
-      method: 'POST',
+      method: 'DELETE',
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
@@ -85,85 +101,153 @@ class GatewayPage extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          // console.log('网关创建成功');
-          alert('创建网关成功');
-          this.handleToggle()
-        } else if (res.code === 400) {
-          // console.log('网关创建失败');
-        } else if (res.code === 3109) {
-          // console.log('创建失败，请先输入gatewayId');
-          // console.log('the res code is ', res.code);
-          // console.log('the res is ', res)
-          alert("创建失败，请填写完整的信息");
-        } else if (res.code === 2106) {
-          alert("创建失败，请输入正确格式的网关ID")
-        } else if (res.code === 3401) {
-          alert('创建失败，该网关已经存在');
-        } else if (res.code === 3102) {
-          alert("该用户还没有注册，请先注册用户");
+          alert('该网关删除成功');
+          //再次刷新页面
+          this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
         } else {
-          alert('网关创建失败,未知问题');
+          alert('删除操作遇到问题');
           console.log('the res code is ', res.code);
           console.log('the res is ', res)
         }
       })
+      .catch(() => {
+        alert("删除失败，删除请求错误");
+      })
+
+
+  }
+  postGatewayInfo(name, id, type, frequency, model, location, description) {
+    if (name === null) {
+      alert("网关名称不能为空,请重新输入");
+    } else if (id === null) {
+      alert("网关ID不能为空，请重新输入");
+    } else if (id.length !== 16) {
+      alert("网关ID位数为16，请重新输入")
+    } else if (location === null) {
+      alert('地址位置不能为空，请重新输入');
+    } else {
+      const Url = baseUrl + '/gateway';
+      var data = {
+        name: name,
+        userID: this.props.data.userId,
+        gatewayId: id,
+        type: type,
+        frequencyPlan: frequency,
+        model: model,
+        location: location,
+        description: description,
+      }
+      fetch(Url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: qs.stringify(data),
+      }).then(responce => responce.json())
+        .then(res => {
+          if (res.code === 200) {
+            alert('创建网关成功');
+            this.handleToggle();
+            //再次刷新页面
+            this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
+          } else if (res.code === 400) {
+          } else if (res.code === 3109) {
+            alert("创建失败，请填写完整的信息");
+          } else if (res.code === 2106) {
+            alert("创建失败，请输入正确格式的网关ID")
+          } else if (res.code === 3401) {
+            alert('创建失败，该网关已经存在');
+          } else if (res.code === 3102) {
+            alert("该用户还没有注册，请先注册用户");
+          } else {
+            alert('网关创建失败,未知问题');
+            console.log('the res code is ', res.code);
+            console.log('the res is ', res)
+          }
+        })
+    }
+
   }
 
   render() {
     const dataSource = this.props.data.gatewayInfo.map((each) => {
       return ({
         gatewayId: each['gatewayId'],
+        name: each['name'],
         frequencyPlan: each['frequencyPlan'],
         location: each['location'],
         model: each['model'],
         type: each['type'],
-        // timestamp:new Date(each['updatedAt']).toLocaleString()
         timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
+        description: each['description'],
+        // deleteEach:<button>删除</button>
       })
     })
     const columns = [
+      {
+        title: '网关名称',
+        dataIndex: 'name',
+        key: 'name',
+        width: '5%',
+        render: (text, record, index) => {
+          var thisId = this.props.data.gatewayInfo[index]['gatewayId'] !== undefined ? this.props.data.gatewayInfo[index]['gatewayId'] : null;
+          var name = text
+          // console.log('the id of this name is '  + '     ' + thisId + " " + name);
+          return <Link to={
+            {
+              pathname: `/gateway/${thisId}/${name}/data`,
+              state: { name: name }
+            }
+          }>{name}</Link>
+          // render: (index) => {
+          //   var thisId = null;
+          //   for(var i = 0; i < this.props.data.gatewayInfo.length; i++) {
+          //     if(this.props.data.gatewayInfo[i]['name'] === name) {
+          //       thisId = this.props.data.gatewayInfo[i]['gatewayId'];
+          //       console.log('the id of this name is ' + name + '     ' + index);
+          //     }
+          //   }
+          //   return <Link to = {
+          //     {
+          //       pathname: `/gateway/${thisId}/${name}/data`,
+          //       state:{name:name}
+          //     }
+          //   }>{name}</Link>
+        }
+      },
       {
         title: '网关ID',
         dataIndex: 'gatewayId',
         key: 'gatewayId',
         width: '10%',
-        render: (gatewayId) => {
-          // this.props.selectedGateway(gatewayId);
-          return <Link to={
-            {
-              pathname: `/gateway/${gatewayId}/data`,
-
-              // state:{oneGatewayId:gatewayId}
-            }
-          }>{gatewayId}</Link>
-        },
+        render: (gatewayId) => gatewayId
       },
       {
         title: '类型',
         dataIndex: 'type',
         key: 'type',
-        width: '10%',
+        width: '5%',
         render: type => type,
       },
       {
         title: '频段',
         dataIndex: 'frequencyPlan',
         key: 'frequencyPlan',
-        width: '10%',
+        width: '5%',
         render: frequencyPlan => frequencyPlan,
       },
       {
         title: '型号',
         dataIndex: 'model',
         key: 'model',
-        width: '10%',
+        width: '5%',
         render: model => model,
       },
       {
         title: '地理位置',
         dataIndex: 'location',
         key: 'location',
-        width: '10%',
+        width: '5%',
         render: location => location,
       },
       {
@@ -174,9 +258,33 @@ class GatewayPage extends Component {
         // render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
         render: timestamp => timestamp,
       },
+      {
+        title: '网关描述',
+        dataIndex: 'description',
+        key: 'description',
+        width: '10%',
+        // render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
+        render: description => description === null ? '暂无' : description,
+      },
+      {
+        title: '',
+        dataIndex: 'deleteEach',
+        key: 'deleteEach',
+        width: '10%',
+        // render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
+        render: (text, record, index) => {
+          return (
+            <Button color="danger" onClick={() => {
+              if (this.props.data.gatewayInfo[index]['gatewayId'] !== undefined) {
+                this.deleteOneGateway(this.props.data.gatewayInfo[index]['gatewayId']);
+                // this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
+              }
+            }}>删除</Button>
+          )
+        },
+      },
     ];
-    // console.log('the data is ', this.props.data);
-    // console.log('the data is ', this.props.data);
+    // console.log('the redux data is ',this.props.data);
     return (
 
       <div className="animated fadeIn">
@@ -185,7 +293,6 @@ class GatewayPage extends Component {
             <Card>
               <CardHeader className="h3 bg-teal">
                 <i className="icon-feed"></i>LoRa网关设备
-                {/* <Button onClick={this.props.getGatewayId(testUserId)}><i className="icon-plus"></i> {" "}LORA网关设备</Button> */}
                 <div className="card-header-actions">
                   <Button color="warning" onClick={this.handleToggle}><i className="icon-plus"></i> {" "}创建</Button>
                 </div>
@@ -209,7 +316,6 @@ class GatewayPage extends Component {
                     this.props.getGatewayInfo(this.props.data.userId, pagination.current, this.state.pageSize);
 
                   }}
-                  //   dataSource={dataSource}
                   dataSource={dataSource}
                   columns={columns}
                   rowKey={record => record.timestamp}
@@ -227,11 +333,23 @@ class GatewayPage extends Component {
               <InputGroup className="mb-3">
                 <Col md="3">
                   <InputGroupText>
+                    网关名称：
+                </InputGroupText>
+                </Col>
+                <Col xs="12" md="9">
+                  <Input type="text" id="name" name="name" placeholder="必填" value={this.state.name} onChange={this.handleName} maxLength={10}
+                    valid={this.state.nameValid} invalid={!this.state.nameValid} />
+                </Col>
+              </InputGroup>
+              <InputGroup className="mb-3">
+                <Col md="3">
+                  <InputGroupText>
                     网关ID：
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="9">
-                  <Input type="text" id="gatewayId" name="gatewayId" placeholder="唯一且为8字节长(16个字符)" value={this.state.gatewayId} onChange={this.handleGatewayId} />
+                  <Input type="text" id="gatewayId" name="gatewayId" placeholder="必填，唯一且为8字节长(16个字符)" value={this.state.gatewayId} onChange={this.handleGatewayId} maxLength={16} pattern="[0-9a-fA-F]{0,16}"
+                    valid={this.state.idValid} invalid={!this.state.idValid} />
                 </Col>
               </InputGroup>
               <InputGroup className="mb-3">
@@ -288,19 +406,27 @@ class GatewayPage extends Component {
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="9">
-                  <Input type="text" id="location" name="location" placeholder="网关地理位置" value={this.state.location} onChange={this.handleLocation} />
+                  <Input type="text" id="location" name="location" placeholder="必填，网关的地理位置" value={this.state.location} onChange={this.handleLocation}
+                    valid={this.state.locationValid} invalid={!this.state.locationValid} />
+                </Col>
+              </InputGroup>
+              <InputGroup className="mb-3">
+                <Col md="3">
+                  <InputGroupText>
+                    网关描述：
+                </InputGroupText>
+                </Col>
+                <Col xs="12" md="9">
+                  <Input type="textarea" id="description" name="description" placeholder="选填，为网关添加适当的描述" value={this.state.description} onChange={this.handleDescription} />
                 </Col>
               </InputGroup>
             </Form>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-              // console.log('gatewayod is ', this.state.gatewayId)
-              this.postGatewayInfo(this.state.gatewayId, this.state.type, this.state.frequency, this.state.model, this.state.location);
-
+              this.postGatewayInfo(this.state.name, this.state.gatewayId, this.state.type, this.state.frequency, this.state.model, this.state.location, this.state.description);
             }
             }>确认</Button>{' '}
-            {/* <Button color="primary" onClick={this.handleToggle}>确认</Button>{' '} */}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>
           </ModalFooter>
         </Modal>
