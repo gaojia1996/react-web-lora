@@ -255,7 +255,7 @@ class DeviceData extends Component {
                                                     </Col>
                                                   </Row>
                                                 )
-                                              }
+                                              } else { return null }
                                             })}
                                           </React.Fragment>
                                         )

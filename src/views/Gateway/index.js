@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from "react-redux";
 import store from "../../redux/index.js"
-import GatewayPage from './gatewayPage'
+import GatewayPage from './GatewayPage'
 
 
 class Index extends Component {
@@ -12,7 +12,6 @@ class Index extends Component {
           <div>
             <GatewayPage />
           </div>
-
         </div>
       </Provider>
     )
