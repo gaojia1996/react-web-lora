@@ -14,7 +14,7 @@ const routesWithAuth = [
   { path: '/gateway/:gatewayId/:name/data', exact: true, name: '网关数据', component: GatewayData },
   { path: '/application', exact: true, name: '应用管理', component: Applications }, //应用管理页面
   { path: '/device', exact: true, name: '设备管理', component: Devices }, //设备管理页面
-  { path: '/device/:DevEUI/data', name: '设备数据', component: DeviceData },
+  { path: '/device/:DevEUI/:name/data', name: '设备数据', component: DeviceData },
 ];
 
 const routesProtected = [

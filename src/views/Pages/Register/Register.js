@@ -19,7 +19,7 @@ class Register extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleEmail(event) {
-    const reg = new RegExp("^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$");
+    const reg = new RegExp("^([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+.[a-zA-Z]{2,3}$");
     this.setState({
       email: event.target.value,
       emailValid: reg.test(event.target.value) ? true : false,

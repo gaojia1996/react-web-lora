@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardGroup, Col, Container, Input, InputGroup, InputGroupAddon, InputGroupText, Row, FormGroup, FormText, } from 'reactstrap';
+import { Button, Card, CardBody, CardGroup, Col, Container, Input, InputGroup, InputGroupAddon, InputGroupText, Row, FormGroup, } from 'reactstrap';
 import { connect } from "react-redux";
 import { userLogin } from '../../../redux/actions';
 import { bindActionCreators } from "redux";
@@ -19,7 +19,7 @@ class Login extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleEmail(event) {
-    const reg = new RegExp("^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$");
+    const reg = new RegExp("^([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|-|.]?)*[a-zA-Z0-9]+.[a-zA-Z]{2,3}$");
     this.setState({
       email: event.target.value,
       emailValid: reg.test(event.target.value) ? true : false,

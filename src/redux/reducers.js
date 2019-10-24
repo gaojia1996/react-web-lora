@@ -14,6 +14,17 @@ const initialState = {
   devicesPageCurrent: 1, //设备列表当前页码
   devicesFetch: false, //设备列表数据获取标志
   devicesTableItem: [], //设备列表内容
+  devicePagesize: 8, //设备应用数据列表分页页数
+  devicePagecount: 0, //设备应用数据列表的所有数据
+  devicePageCurrent: 1, //设备应用数据列表当前页码
+  deviceFetch: false, //设备应用数据列表数据获取标志
+  deviceColum: [], //设备应用数据列表数据格式
+  deviceTableItem: [], //设备应用数据列表内容
+  deviceNoDevAddr: false, //设备没有DevAddr标志，false表示默认设备拥有该属性
+  deviceNoColum: false, //设备没有表头数据标志，false表示默认用户已经上传了pb文件
+  deviceGraphFetch: false, //设备数据图获取接口标志，false表示还未收到数据
+  deviceGraphData: [], //设备画图数据
+  pageType: 0, //设备应用数据页面渲染类型，0表示数据图，1表示数据表
 
   gatewayInfo: [],//所有的网关信息
   gatewayNumber: 0,
@@ -157,7 +168,7 @@ export default (state = initialState, action) => {
         devicesPagecount: action.total,
       }
     }
-    case "APPLICATION_CHANGE": {
+    case "APPLICATION_CHANGE": { //select选择框更换应用
       var applicationChange = state.applicationChoose;
       for (var i = 0; i < state.applicationInfo.length; i++) {
         if (state.applicationInfo[i]['AppEUI'] === action.applicationChoose) {
@@ -169,10 +180,66 @@ export default (state = initialState, action) => {
         applicationChoose: applicationChange,
       }
     }
-    case "DEVICES_CHANGE_CURRENT_PAGE": {
+    case "DEVICES_CHANGE_CURRENT_PAGE": { //设备列表首页更换页码
       return {
         ...state,
         devicesPageCurrent: action.devicesPageCurrent,
+      }
+    }
+    case "DEVICE_NO_DEVADDR": { //设备属性中不存在DevAddr，视为暂无应用数据
+      return {
+        ...state,
+        deviceFetch: true,
+        deviceNoDevAddr: true,
+      }
+    }
+    case "DEVICE_DATA_COLUM": { //将组好的column设置存在deviceColum之中
+      return {
+        ...state,
+        deviceFetch: true,
+        deviceColum: action.data,
+      }
+    }
+    case "DEVICE_GET_APP_DATA": { //将获取的设备应用数据存储起来
+      return {
+        ...state,
+        deviceFetch: true,
+        devicePagecount: action.devicePagecount,
+        deviceTableItem: action.data
+      }
+    }
+    case "DEVICE_NO_COLUM": { //设备所属的应用暂无上传pb文件，无法解析
+      return {
+        ...state,
+        deviceFetch: true,
+        deviceNoColum: true,
+      }
+    }
+    case "DEVICE_GET_GRAPH_DATA": { //设备的画图数据
+      return {
+        ...state,
+        deviceGraphFetch: true,
+        deviceGraphData: action.data,
+      }
+    }
+    case "DEVICE_CHANGE_PAGETYPE": { //应用页面渲染类型
+      return {
+        ...state,
+        pageType: action.data,
+      }
+    }
+    case "DEVICE_DID_UNMOUNT": { //恢复默认值
+      return {
+        ...state,
+        devicePagecount: 0,
+        devicePageCurrent: 1,
+        deviceFetch: false,
+        deviceColum: [],
+        deviceTableItem: [],
+        deviceNoDevAddr: false,
+        deviceNoColum: false,
+        deviceGraphFetch: false,
+        deviceGraphData: [],
       }
     }
     default:
