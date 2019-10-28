@@ -397,6 +397,7 @@ class Index extends Component {
       {
         title: '设备名称',
         dataIndex: 'name',
+        sorter: (a, b) => a.name.length - b.name.length,
         key: 'name',
         width: '8%',
         render: (name, record) => (!name || name === "") ? "暂无" : <Link to={`/device/${record.DevEUI}/${name}/data`}>{name}</Link>,
@@ -404,6 +405,7 @@ class Index extends Component {
       {
         title: 'LoRa设备唯一标识符',
         dataIndex: 'DevEUI',
+        sorter: (a, b) => parseInt(a.DevEUI, 16) - parseInt(b.DevEUI, 16),
         key: 'DevEUI',
         width: '10%',
         render: DevEUI => DevEUI,
@@ -411,6 +413,7 @@ class Index extends Component {
       {
         title: '激活模式',
         dataIndex: 'activationMode',
+        sorter: (a, b) => a.activationMode.length - b.activationMode.length,
         key: 'activationMode',
         width: '10%',
         render: activationMode => activationMode,
@@ -418,6 +421,7 @@ class Index extends Component {
       {
         title: 'LoRaWAN版本',
         dataIndex: 'ProtocolVersion',
+        sorter: (a, b) => a.ProtocolVersion.length - b.ProtocolVersion.length,
         key: 'ProtocolVersion',
         width: '10%',
         render: ProtocolVersion => ProtocolVersion,
@@ -425,6 +429,7 @@ class Index extends Component {
       {
         title: '设备地址',
         dataIndex: 'DevAddr',
+        sorter: (a, b) => parseInt(a.DevAddr, 16) - parseInt(b.DevAddr, 16),
         key: 'DevAddr',
         width: '10%',
         render: DevAddr => (!DevAddr || DevAddr === "") ? "暂无" : DevAddr,
@@ -460,6 +465,7 @@ class Index extends Component {
       {
         title: '创建时间',
         dataIndex: 'createdAt',
+        sorter: (a, b) => Number(new Date(a.createdAt)) - Number(new Date(b.createdAt)),
         key: 'createdAt',
         width: '10%',
         render: createdAt => moment(createdAt).format('YYYY-MM-DD HH:mm:ss'),

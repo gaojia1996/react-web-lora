@@ -297,7 +297,7 @@ class GatewayPage extends Component {
       {
         title: '网关名称',
         dataIndex: 'name',
-        sorter: (a, b) => a.name - b.name,
+        sorter: (a, b) => a.name.length - b.name.length,
         key: 'name',
         width: '5%',
         render: (name, record) => <Link to={{ pathname: `/gateway/${record.gatewayId}/${name}/data`, state: { name: name } }}>{name}</Link>
@@ -308,11 +308,13 @@ class GatewayPage extends Component {
         dataIndex: 'gatewayId',
         key: 'gatewayId',
         width: '8%',
+        sorter: (a, b) => parseInt(String(a.gatewayId), 16) - parseInt(String(b.gatewayId), 16),
         render: (gatewayId) => gatewayId
       },
       {
         title: '类型',
         dataIndex: 'type',
+        sorter: (a, b) => a.type.length - b.type.length,
         key: 'type',
         width: '5%',
         render: type => type,
@@ -320,6 +322,7 @@ class GatewayPage extends Component {
       {
         title: '频段',
         dataIndex: 'frequencyPlan',
+        sorter: (a, b) => a.frequencyPlan.length - b.frequencyPlan.length,
         key: 'frequencyPlan',
         width: '10%',
         render: frequencyPlan => frequencyPlan,
@@ -327,6 +330,7 @@ class GatewayPage extends Component {
       {
         title: '型号',
         dataIndex: 'model',
+        sorter: (a, b) => parseInt(String(a.model).substring(1)) - parseInt(String(b.model).substring(1)),
         key: 'model',
         width: '5%',
         render: model => model,
@@ -334,6 +338,7 @@ class GatewayPage extends Component {
       {
         title: '地理位置',
         dataIndex: 'location',
+        sorter: (a, b) => a.location.length - b.location.length,
         key: 'location',
         width: '5%',
         render: location => location,
@@ -348,6 +353,7 @@ class GatewayPage extends Component {
       {
         title: '创建时间',
         dataIndex: 'timestamp',
+        sorter: (a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)),
         key: 'timestamp',
         width: '10%',
         render: timestamp => timestamp,

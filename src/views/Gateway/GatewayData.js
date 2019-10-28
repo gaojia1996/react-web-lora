@@ -62,6 +62,7 @@ class GatewayData extends Component {
       {
         title: '时间',
         dataIndex: 'timestamp',
+        sorter: (a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)),
         key: 'timestamp',
         width: '10%',
         render: timestamp => timestamp,
