@@ -3,10 +3,12 @@ import { Button, Card, CardBody, CardHeader, Col, Row, Modal, ModalBody, ModalFo
 import { Table } from 'antd';
 import moment from 'moment';
 import { connect } from "react-redux";
+import { Link } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import qs from 'query-string';
 import getDataFuncs from '../../redux/actions/getDataFuncs'
 import config from '../../config.js'
+
 
 const baseUrl = config.dataUrl;
 class AppPage extends Component {
@@ -19,6 +21,7 @@ class AppPage extends Component {
       name: null,
       // AppEUI: this.getRandom(16),
       AppEUI: null,
+      description:null,
       pageSize: 7,
       currentPage: 1,
       data: {
@@ -29,6 +32,8 @@ class AppPage extends Component {
     this.handleToggle = this.handleToggle.bind(this);
     this.handleName = this.handleName.bind(this);
     this.handleAppEUI = this.handleAppEUI.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
+    
   }
   componentDidMount() {
     this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
@@ -69,7 +74,7 @@ class AppPage extends Component {
       })
 
   }
-  postAppInfo(userId, AppEUI, name) {
+  postAppInfo(userId, AppEUI, name,description) {
     if (this.state.name === null) {
       alert('应用名称不能为空，请重新输入');
     } else if (this.state.AppEUI === null || this.state.AppEUI.length !== 16) {
@@ -80,6 +85,7 @@ class AppPage extends Component {
         userID: userId,
         AppEUI: AppEUI,
         name: name,
+        description:description
       }
       fetch(Url, {
         method: 'POST',
@@ -136,46 +142,70 @@ class AppPage extends Component {
       euiValid: event.target.value.length !== 16 || event.target.value === null || event.target.value === "" ? false : true,
     });
   }
+  handleDescription(event) {
+    this.setState({
+      description: event.target.value,
+    });
+  }
   handlePost() {
 
   }
   render() {
-    // console.log('the state is ',this.state)
+    console.log('the state is ',this.state)
     const dataSource = this.state.data['rows'].map((each) => {
       return ({
         name: each['name'],
         AppEUI: each['AppEUI'],
+        description:each['description'],
         timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
       })
     })
 
     const columns = [
       {
-        title: 'AppEUI',
-        dataIndex: 'AppEUI',
-        key: 'AppEUI',
-        width: '10%',
-        render: AppEUI => AppEUI,
-      },
-      {
         title: '应用名称',
         dataIndex: 'name',
         key: 'name',
-        width: '10%',
-        render: name => name,
+        width: '5%',
+        render: (text, record, index) => {
+          return <Link to={
+            {
+              pathname: `/application/${record.AppEUI}/${text}/dataType`,
+              // state: { name: name }
+            }
+          }>{text}</Link>
+        }
       },
+      {
+        title: 'AppEUI',
+        dataIndex: 'AppEUI',
+        key: 'AppEUI',
+        width: '5%',
+        // render: AppEUI => AppEUI,
+        render: AppEUI=>AppEUI,
+      },
+      {
+        title: '描述',
+        dataIndex: 'description',
+        key: 'description',
+        width: '5%',
+        // render: AppEUI => AppEUI,
+        render: description=>(description === null || description.length === 0 || description.trim().length === 0) ? '暂无' : description
+      },
+
+      
       {
         title: '创建时间',
         dataIndex: 'timestamp',
         key: 'timestamp',
-        width: '10%',
+        width: '5%',
         render: timestamp => timestamp,
       },
       {
-        title: '',
+        title: '操作',
         dataIndex: 'deleteEach',
         key: 'deleteEach',
-        width: '10%',
+        width: '5%',
         // render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
         render: (text, record, index) => {
           return (
@@ -249,11 +279,22 @@ class AppPage extends Component {
                     onChange={this.handleAppEUI} maxLength={16} pattern="[0-9a-fA-F]{0,16}" valid={this.state.euiValid} invalid={!this.state.euiValid} />
                 </Col>
               </InputGroup>
+              <InputGroup className="mb-3">
+                <Col md="3">
+                  <InputGroupText>
+                   描述：
+                </InputGroupText>
+                </Col>
+                <Col xs="12" md="9">
+                  <Input type="textarea" id="description" name="description" placeholder="选填，添加适当的描述" value={this.state.description}
+                    onChange={this.handleDescription}  />
+                </Col>
+              </InputGroup>
             </Form>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-              this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name);
+              this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name,this.state.description);
             }}>确认</Button>{' '}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>
           </ModalFooter>

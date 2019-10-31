@@ -1,4 +1,5 @@
 import fetchData from './fetchData';
+import moment from 'moment';
 
 export function userRegister(userEmail, userPassword) { //用户注册action
   return dispatch => {
@@ -74,7 +75,7 @@ export function devicesFirst(userID, pagecount, pagesize) { //设备管理第一
       });
   };
 }
-export function devicesNoFirst(userID, AppEUI, pagecount, pagesize){
+export function devicesNoFirst(userID, AppEUI, pagecount, pagesize) {
   return dispatch => {
     fetchData.user2application(userID)
       .then((res) => {
@@ -141,11 +142,143 @@ export function app2device(AppEUI, pagecount, pagesize) { //通过应用AppEUI�
       });
   }
 }
-export function changeCurrentPage(devicesPageCurrent) {
+export function changeCurrentPage(devicesPageCurrent) { //设备首页更改页码操作
   return dispatch => {
     dispatch({
       type: "DEVICES_CHANGE_CURRENT_PAGE",
       devicesPageCurrent: devicesPageCurrent,
     });
+  }
+}
+export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过DevEUI获取DevAddr 若无则暂无数据，若有，使用DevAddr和AppEUI获取应用数据，同时使用AppEUI获取相应的pb文件
+  return dispatch => {
+    fetchData.deviceInfo(DevEUI)
+      .then((res) => {
+        if (res.DevAddr === null) { //DevAddr不存在
+          dispatch({
+            type: "DEVICE_NO_DEVADDR",
+          });
+        } else { //DevAddr存在，说明设备已经和server进行了注册流程
+          if (AppEUI === null || AppEUI === undefined) {
+            AppEUI = res.AppEUI
+          }
+          const DevAddr = res.DevAddr;
+          fetchData.deviceGetColum(AppEUI) //获取colum的设置
+            .then((res) => {
+              if (res && res.message) {
+                var columIn = [{
+                  title: '时间',
+                  kName: '时间',
+                  dataIndex: 'timestamp',
+                  key: 'timestamp',
+                  width: '10%',
+                  render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
+                }];
+                const message = JSON.parse(res.message);
+                for (var keyIn in message) {
+                  var k = 'data.' + keyIn;
+                  var objIn = {
+                    title: message[keyIn]["name"] + '(' + message[keyIn]["unit"] + ")",
+                    kName: message[keyIn]["name"],
+                    dataIndex: k,
+                    key: keyIn,
+                    width: '10%',
+                    render: keyIn => keyIn,
+                  };
+                  columIn.push(objIn);
+                }
+                dispatch({
+                  type: "DEVICE_DATA_COLUM",
+                  data: columIn,
+                });
+                fetchData.deviceData(AppEUI, DevAddr, pagesize, pagecount)
+                  .then((res) => {
+                    dispatch({
+                      type: "DEVICE_GET_APP_DATA",
+                      data: res['rows'],
+                      devicePagecount: res['count'],
+                    });
+                  });
+              } else { //设备所属的应用没有上传pb文件
+                dispatch({
+                  type: "DEVICE_NO_COLUM",
+                });
+              }
+            });
+        }
+      });
+  }
+}
+export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr 然后通过DevAddr和AppEUI获取最新100条数据用于画图
+  return dispatch => {
+    fetchData.deviceInfo(DevEUI)
+      .then((res) => {
+        if (res.DevAddr === null) { //DevAddr不存在
+          dispatch({
+            type: "DEVICE_NO_DEVADDR",
+          });
+        } else { //DevAddr存在，说明设备已经和server进行了注册流程
+          if (AppEUI === null || AppEUI === undefined) {
+            AppEUI = res.AppEUI
+          }
+          const DevAddr = res.DevAddr;
+          fetchData.deviceGetColum(AppEUI) //获取colum的设置
+            .then((res) => {
+              if (res && res.message) {
+                var columIn = [{
+                  title: '时间',
+                  kName: '时间',
+                  dataIndex: 'timestamp',
+                  key: 'timestamp',
+                  width: '10%',
+                  render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
+                }];
+                const message = JSON.parse(res.message);
+                for (var keyIn in message) {
+                  var k = 'data.' + keyIn;
+                  var objIn = {
+                    title: message[keyIn]["name"] + '(' + message[keyIn]["unit"] + ")",
+                    kName: message[keyIn]["name"],
+                    dataIndex: k,
+                    key: keyIn,
+                    width: '10%',
+                    render: keyIn => keyIn,
+                  };
+                  columIn.push(objIn);
+                }
+                dispatch({
+                  type: "DEVICE_DATA_COLUM",
+                  data: columIn,
+                });
+                fetchData.deviceData(AppEUI, DevAddr, 100, 1)
+                  .then((res) => {
+                    dispatch({
+                      type: "DEVICE_GET_GRAPH_DATA",
+                      data: res['rows'],
+                    });
+                  });
+              } else { //设备所属的应用没有上传pb文件
+                dispatch({
+                  type: "DEVICE_NO_COLUM",
+                });
+              }
+            });
+        }
+      });
+  }
+}
+export function changeDevicePageType(type) {
+  return dispatch => {
+    dispatch({
+      type: "DEVICE_CHANGE_PAGETYPE",
+      data: type,
+    });
+  }
+}
+export function deviceDidUnmount() {
+  return dispatch => {
+    dispatch({
+      type: "DEVICE_DID_UNMOUNT",
+    })
   }
 }

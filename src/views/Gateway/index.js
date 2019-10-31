@@ -12,7 +12,6 @@ class Index extends Component {
           <div>
             <GatewayPage />
           </div>
-
         </div>
       </Provider>
     )

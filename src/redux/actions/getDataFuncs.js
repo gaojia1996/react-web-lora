@@ -85,7 +85,17 @@ function getAppInfo(userID,pageNumber,pageSize) {
     .then(parseJSON);
 }
 
-
+function getAppDataTypeFunc(AppEUI) {
+  const Url = baseUrl + '/app2devType?AppEUI=' + AppEUI;
+  return fetch(Url, {
+    accept:'application/json',
+    mode:'cors',
+    jsonpCallback:'callback',
+    method:'GET',
+  })
+  .then(checkStatus)
+  .then(parseJSON);
+}
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return Promise.resolve(response);
@@ -105,6 +115,7 @@ const getDataFuncs = {
     getGatewayInfoFunc,
     getGatewayCommunicateDataFunc,
     getAppInfo,
+    getAppDataTypeFunc
     
 };
 export default getDataFuncs;

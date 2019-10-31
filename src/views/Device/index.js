@@ -14,7 +14,7 @@ class Index extends Component {
     this.state = {
       modal: false,
       modalSelect: false,
-      name: " ", //设备名称
+      name: "", //设备名称
       nameValid: false,
       activationMode: "OTAA", //设备激活模式
       protocolVersion: "1.0.2", //loraWAN 版本
@@ -29,7 +29,7 @@ class Index extends Component {
       AppSKeyValid: true,
       NwkSKey: this.getRandom(32), //FIX ME
       NwkSKeyValid: true,
-      Description: " ", //设备描述
+      Description: "", //设备描述
     };
     this.handleToggle = this.handleToggle.bind(this);
     this.handleToggleSelect = this.handleToggleSelect.bind(this);
@@ -67,7 +67,7 @@ class Index extends Component {
   handleName(event) {
     this.setState({
       name: event.target.value,
-      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" ? false : true,
+      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" || (event.target.value.length > 0 && event.target.value.trim().length === 0) ? false : true,
     });
   }
   handleActivationMode(event) {
@@ -289,7 +289,7 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="textarea" id="description" name="description" placeholder="设备描述，可空" onChange={this.handleDescription}>
+              <Input type="textarea" id="description" name="description" placeholder="选填，设备描述" onChange={this.handleDescription}>
               </Input>
             </Col>
           </InputGroup>
@@ -372,7 +372,7 @@ class Index extends Component {
               </InputGroupText>
             </Col>
             <Col xs="12" md="8">
-              <Input type="textarea" id="description" name="description" placeholder="设备描述，可空" onChange={this.handleDescription}>
+              <Input type="textarea" id="description" name="description" placeholder="选填，设备描述" onChange={this.handleDescription}>
               </Input>
             </Col>
           </InputGroup>
@@ -383,7 +383,7 @@ class Index extends Component {
   componentDidMount() { //第一次加载第一位应用下的设备数据
     if (!this.props.data.applicationChoose.hasOwnProperty('AppEUI')) {
       this.props.devicesFirst(this.props.data.userId, this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
-    }else{
+    } else {
       this.props.devicesNoFirst(this.props.data.userId, this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
     }
   }
@@ -395,18 +395,18 @@ class Index extends Component {
     }
     const columns = [
       {
+        title: '设备名称',
+        dataIndex: 'name',
+        key: 'name',
+        width: '8%',
+        render: (name, record) => (!name || name === "") ? "暂无" : <Link to={`/device/${record.DevEUI}/${name}/data`}>{name}</Link>,
+      },
+      {
         title: 'LoRa设备唯一标识符',
         dataIndex: 'DevEUI',
         key: 'DevEUI',
         width: '10%',
-        render: DevEUI => <Link to={`/device/${DevEUI}/data`}>{DevEUI}</Link>,
-      },
-      {
-        title: '设备名称',
-        dataIndex: 'name',
-        key: 'name',
-        width: '10%',
-        render: name => (!name || name === "") ? "暂无" : name,
+        render: DevEUI => DevEUI,
       },
       {
         title: '激活模式',
@@ -510,7 +510,7 @@ class Index extends Component {
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="8">
-                  <Input type="text" id="name" name="name" placeholder="设备名称，必填" value={this.state.name}
+                  <Input type="text" id="name" name="name" placeholder="必填，设备名称" value={this.state.name}
                     onChange={this.handleName} valid={this.state.nameValid} invalid={!this.state.nameValid}>
                   </Input>
                 </Col>

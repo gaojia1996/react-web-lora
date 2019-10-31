@@ -98,7 +98,7 @@ function app2device(AppEUI, pagecount, pagesize) { //获取应用下的所有设
 }
 
 function deviceInfo(DevEUI) { //获取设备的属性信息
-  const Url = baseUrl + 'device/' + DevEUI;
+  const Url = baseUrl + '/device/' + DevEUI;
   return fetch(Url, {
     method: 'GET',
     headers: {
@@ -108,8 +108,19 @@ function deviceInfo(DevEUI) { //获取设备的属性信息
     .then(parseJSON);
 }
 
-function deviceData(DevEUI, pagesize, pagecount) { //获取设备的应用数据 支持分页操作
-  const Url = baseUrl + 'device/' + DevEUI + '/data?size=' + pagesize + '&from=' + pagecount;
+function deviceGetColum(AppEUI) { //根据设备所属的应用AppEUI获取解析应用数据的json数据
+  const Url = baseUrl + '/app2devType?AppEUI=' + AppEUI;
+  return fetch(Url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+  })
+    .then(parseJSON);
+}
+
+function deviceData(AppEUI, DevAddr, pagesize, pagecount) { //获取设备的应用数据 支持分页操作
+  const Url = baseUrl + '/device/' + AppEUI + '/' + DevAddr + '/data?size=' + pagesize + '&from=' + pagecount;
   return fetch(Url, {
     method: 'GET',
     headers: {
@@ -126,6 +137,6 @@ function parseJSON(response) {
 const fetchData = {
   user, login,
   user2application,
-  device, deviceAbp, deviceDelete, app2device, deviceInfo, deviceData,
+  device, deviceAbp, deviceDelete, app2device, deviceInfo, deviceGetColum, deviceData,
 };
 export default fetchData;
