@@ -62,6 +62,7 @@ class GatewayData extends Component {
       {
         title: '时间',
         dataIndex: 'timestamp',
+        sorter: (a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)),
         key: 'timestamp',
         width: '10%',
         render: timestamp => timestamp,
@@ -115,16 +116,14 @@ class GatewayData extends Component {
           <Col>
             <Card>
               <CardHeader className="h3 bg-teal">
-                网关ID:{this.props.match.params.gatewayId}
-
-                {/* 网关ID:{'this.props.match.params.gatewayId'} */}
+                网关名称：{this.props.match.params.name}
               </CardHeader>
               <CardBody>
                 <Row>
                   <Col>
                     <Card>
                       <CardHeader className="h4 bg-blue">
-                        <i className="fa fa-table fa-lg"></i>网关通信数据
+                        <i className="fa fa-table fa-lg"></i>通信数据
                       </CardHeader>
                       <CardBody>
                         <Table
