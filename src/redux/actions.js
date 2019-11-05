@@ -150,6 +150,13 @@ export function changeCurrentPage(devicesPageCurrent) { //设备首页更改页�
     });
   }
 }
+export function devicesDidUnmount() { //设备首页unmount时redux中的数据置零
+  return dispatch => {
+    dispatch({
+      type: "DEVICES_DID_UNMOUNT",
+    });
+  }
+}
 export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过DevEUI获取DevAddr 若无则暂无数据，若有，使用DevAddr和AppEUI获取应用数据，同时使用AppEUI获取相应的pb文件
   return dispatch => {
     fetchData.deviceInfo(DevEUI)
@@ -269,7 +276,7 @@ export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr
       });
   }
 }
-export function changeDevicePageType(type) {
+export function changeDevicePageType(type) { //设备应用数据页面是table还是graph
   return dispatch => {
     dispatch({
       type: "DEVICE_CHANGE_PAGETYPE",
@@ -277,10 +284,18 @@ export function changeDevicePageType(type) {
     });
   }
 }
-export function deviceDidUnmount() {
+export function deviceChangeTablePage(devicePageCurrent) { //设备应用数据table更换页码操作
+  return dispatch => {
+    dispatch({
+      type: "DEVICE_CHANGE_CURRENT_PAGE",
+      devicePageCurrent: devicePageCurrent,
+    });
+  }
+}
+export function deviceDidUnmount() { //设备应用页面unmount时redux中的数据置零
   return dispatch => {
     dispatch({
       type: "DEVICE_DID_UNMOUNT",
-    })
+    });
   }
 }

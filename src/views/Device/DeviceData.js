@@ -4,7 +4,7 @@ import { Line, Pie } from 'react-chartjs-2';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { Table } from 'antd';
 import { connect } from "react-redux";
-import { deviceGetAppData, deviceGetGraphData, changeDevicePageType, deviceDidUnmount } from '../../redux/actions';
+import { deviceGetAppData, deviceGetGraphData, changeDevicePageType, deviceChangeTablePage, deviceDidUnmount } from '../../redux/actions';
 import { bindActionCreators } from "redux";
 import moment from 'moment';
 
@@ -19,7 +19,9 @@ class DeviceData extends Component {
     this.onDismiss = this.onDismiss.bind(this);
   }
   handleChange = (pagination) => { //设备应用数据页面变化
-
+    const page = pagination;
+    this.props.deviceChangeTablePage(page.current);
+    this.props.deviceGetAppData(this.props.match.params.DevEUI, this.props.data.applicationChoose['AppEUI'], this.props.data.devicePagesize, page.current);
   }
   handleClick(type) {
     this.props.changeDevicePageType(type);
@@ -53,20 +55,28 @@ class DeviceData extends Component {
     const options = {
       tooltips: {
         enabled: false,
-        custom: CustomTooltips
+        custom: CustomTooltips, //将默认的tooltip禁用，使用自己的tooltip
       },
-      maintainAspectRatio: false
+      scales: {
+        yAxes: [{
+          ticks: {
+            suggestedMin: 50,
+            suggestedMax: 100,
+          }
+        }],
+      },
+      maintainAspectRatio: true, //窗口缩放时仍保持比例
     }
     var array = [];
     if (this.props.data.deviceGraphFetch && this.props.data.deviceGraphData.length !== 0) {
       for (let i = 0; i < this.props.data.deviceColum.length; i++) { //循环获取二维数组
         array.push([]);
         for (let j = 0; j < this.props.data.deviceGraphData.length; j++) {
-          let array2 = [];
+          let array2;
           if (i === 0) {
-            array2.push(moment(this.props.data.deviceGraphData[j][this.props.data.deviceColum[i]['key']] * 1000).format('YYYY-MM-DD HH:mm:ss'));
+            array2 = moment(this.props.data.deviceGraphData[j][this.props.data.deviceColum[i]['key']] * 1000).format('YYYY-MM-DD HH:mm:ss');
           } else {
-            array2.push(this.props.data.deviceGraphData[j]['data'][this.props.data.deviceColum[i]['key']]);
+            array2 = this.props.data.deviceGraphData[j]['data'][this.props.data.deviceColum[i]['key']];
           }
           array[i].push(array2);
         }
@@ -299,7 +309,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ deviceGetAppData, deviceGetGraphData, changeDevicePageType, deviceDidUnmount }, dispatch);
+  return bindActionCreators({ deviceGetAppData, deviceGetGraphData, changeDevicePageType, deviceChangeTablePage, deviceDidUnmount }, dispatch);
 }
 
 export default connect(

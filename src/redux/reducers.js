@@ -186,6 +186,20 @@ export default (state = initialState, action) => {
         devicesPageCurrent: action.devicesPageCurrent,
       }
     }
+    case "DEVICES_DID_UNMOUNT": { //设备首页unmount时redux中的数据置零
+      return {
+        ...state,
+        applicationFetch: false,
+        applicationInfo: [],
+        applicationChoose: {},
+        devicesPagecount: 0,
+        devicesPageCurrent: 1,
+        devicesFetch: false,
+        devicesTableItem: [],
+        devicePagecount: 0,
+        devicePageCurrent: 1,
+      }
+    }
     case "DEVICE_NO_DEVADDR": { //设备属性中不存在DevAddr，视为暂无应用数据
       return {
         ...state,
@@ -228,6 +242,12 @@ export default (state = initialState, action) => {
         pageType: action.data,
       }
     }
+    case "DEVICE_CHANGE_CURRENT_PAGE": { //应用table页面改变
+      return {
+        ...state,
+        devicePageCurrent: action.devicePageCurrent,
+      }
+    }
     case "DEVICE_DID_UNMOUNT": { //恢复默认值
       return {
         ...state,
@@ -240,6 +260,7 @@ export default (state = initialState, action) => {
         deviceNoColum: false,
         deviceGraphFetch: false,
         deviceGraphData: [],
+        pageType: 0,
       }
     }
     default:

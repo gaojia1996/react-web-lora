@@ -135,7 +135,11 @@ class GatewayPage extends Component {
         if (res.code === 200) {
           alert('该网关删除成功');
           //再次刷新页面
-          this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
+          if (this.props.data.gatewayInfo.length === 1) {
+            this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway - 1, this.state.pageSize);
+          } else {
+            this.props.getGatewayInfo(this.props.data.userId, this.props.data.currentPageOfGateway, this.state.pageSize);
+          }
         } else {
           alert('删除操作遇到问题');
           console.log('the res code is ', res.code);
@@ -324,7 +328,7 @@ class GatewayPage extends Component {
         dataIndex: 'frequencyPlan',
         sorter: (a, b) => a.frequencyPlan.length - b.frequencyPlan.length,
         key: 'frequencyPlan',
-        width: '10%',
+        width: '8%',
         render: frequencyPlan => frequencyPlan,
       },
       {
@@ -347,7 +351,7 @@ class GatewayPage extends Component {
         title: '网关描述',
         dataIndex: 'description',
         key: 'description',
-        width: '10%',
+        width: '8%',
         render: description => description === null || description.length === 0 || description.trim().length === 0 ? '暂无' : description,
       },
       {
@@ -355,14 +359,14 @@ class GatewayPage extends Component {
         dataIndex: 'timestamp',
         sorter: (a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)),
         key: 'timestamp',
-        width: '10%',
+        width: '8%',
         render: timestamp => timestamp,
       },
       {
         title: '操作',
         dataIndex: 'gatewayId',
         key: 'action',
-        width: '8%',
+        width: '10%',
         render: (gatewayId, record) => {
           return (
             <React.Fragment>

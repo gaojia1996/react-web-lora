@@ -4,7 +4,7 @@ import { Table } from 'antd';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
-import { devicesFirst, devicesNoFirst, applicationChange, changeCurrentPage, app2device } from '../../redux/actions';
+import { devicesFirst, devicesNoFirst, applicationChange, changeCurrentPage, app2device, devicesDidUnmount } from '../../redux/actions';
 import { bindActionCreators } from "redux";
 import fetchData from '../../redux/fetchData';
 
@@ -387,6 +387,9 @@ class Index extends Component {
       this.props.devicesNoFirst(this.props.data.userId, this.props.data.applicationChoose['AppEUI'], this.props.data.devicesPageCurrent, this.props.data.devicesPagesize);
     }
   }
+  componentWillUnmount() {
+    this.props.devicesDidUnmount();
+  }
   render() {
     const pagination = {
       current: parseInt(this.props.data.devicesPageCurrent, 10),
@@ -600,7 +603,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ devicesFirst, devicesNoFirst, applicationChange, changeCurrentPage, app2device }, dispatch);
+  return bindActionCreators({ devicesFirst, devicesNoFirst, applicationChange, changeCurrentPage, app2device, devicesDidUnmount }, dispatch);
 }
 
 export default connect(
