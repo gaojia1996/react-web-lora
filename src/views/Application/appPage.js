@@ -17,10 +17,10 @@ class AppPage extends Component {
     this.state = {
       modal: false,
       nameValid: false,
-      euiValid: false,
+      euiValid: true,
       name: null,
-      // AppEUI: this.getRandom(16),
-      AppEUI: null,
+      AppEUI: this.getRandom(16),
+      // AppEUI: null,
       description:null,
       pageSize: 7,
       currentPage: 1,
@@ -166,7 +166,7 @@ class AppPage extends Component {
         title: '应用名称',
         dataIndex: 'name',
         key: 'name',
-        width: '5%',
+        width: '10%',
         render: (text, record, index) => {
           return <Link to={
             {
@@ -180,7 +180,7 @@ class AppPage extends Component {
         title: 'AppEUI',
         dataIndex: 'AppEUI',
         key: 'AppEUI',
-        width: '5%',
+        width: '10%',
         // render: AppEUI => AppEUI,
         render: AppEUI=>AppEUI,
       },
@@ -188,7 +188,7 @@ class AppPage extends Component {
         title: '描述',
         dataIndex: 'description',
         key: 'description',
-        width: '5%',
+        width: '10%',
         // render: AppEUI => AppEUI,
         render: description=>(description === null || description.length === 0 || description.trim().length === 0) ? '暂无' : description
       },
@@ -198,7 +198,7 @@ class AppPage extends Component {
         title: '创建时间',
         dataIndex: 'timestamp',
         key: 'timestamp',
-        width: '5%',
+        width: '10%',
         render: timestamp => timestamp,
       },
       {
