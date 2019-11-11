@@ -195,8 +195,6 @@ export default (state = initialState, action) => {
         devicesPageCurrent: 1,
         devicesFetch: false,
         devicesTableItem: [],
-        devicePagecount: 0,
-        devicePageCurrent: 1,
       }
     }
     case "DEVICE_NO_DEVADDR": { //设备属性中不存在DevAddr，视为暂无应用数据
@@ -244,6 +242,7 @@ export default (state = initialState, action) => {
     case "DEVICE_CHANGE_CURRENT_PAGE": { //应用table页面改变
       return {
         ...state,
+        deviceFetch: false,
         devicePageCurrent: action.devicePageCurrent,
       }
     }

@@ -185,7 +185,7 @@ export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过
           const DevAddr = res.DevAddr;
           fetchData.deviceGetColum(AppEUI) //获取colum的设置
             .then((res) => {
-              if (res && res.message && typeof (res.message) !== "string") {
+              if (res && res.message) {
                 var columIn = [{
                   title: '时间',
                   kName: '时间',
@@ -245,7 +245,7 @@ export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr
           const DevAddr = res.DevAddr;
           fetchData.deviceGetColum(AppEUI) //获取colum的设置
             .then((res) => {
-              if (res && res.message && typeof (res.message) !== "string") {
+              if (res && res.message) {
                 var columIn = [{
                   title: '时间',
                   kName: '时间',

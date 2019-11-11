@@ -45,6 +45,7 @@ class DeviceData extends Component {
     this.props.deviceDidUnmount();
   }
   render() {
+    console.log(this.props.data.deviceTableItem)
     const pagination = {
       current: this.props.data.devicePageCurrent,
       total: this.props.data.devicePagecount,
@@ -213,7 +214,7 @@ class DeviceData extends Component {
                                     onChange={this.handleChange}
                                     dataSource={dataSource}
                                     columns={columns}
-                                    rowKey={record => record.timestamp}
+                                    rowKey={record => record.timestamp + Math.random()}
                                     // scroll={{ x: 1200 }}
                                     loading={!this.props.data.deviceFetch} />
                                 ) : (
