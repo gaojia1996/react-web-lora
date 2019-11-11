@@ -191,7 +191,6 @@ export default (state = initialState, action) => {
         ...state,
         applicationFetch: false,
         applicationInfo: [],
-        applicationChoose: {},
         devicesPagecount: 0,
         devicesPageCurrent: 1,
         devicesFetch: false,

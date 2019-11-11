@@ -83,12 +83,25 @@ export function devicesNoFirst(userID, AppEUI, pagecount, pagesize) {
           dispatch({
             type: "GET_APPLICATION_NULL",
           });
-        } else { //获取的应用不为空
-          dispatch({
-            type: "GET_APPLICATION_INFO_NO_FIRST",
-            data: res.rows,
-          });
-          fetchData.app2device(AppEUI, pagecount, pagesize) //使用第一个应用的AppEUI获取相应的设备数据
+        } else { //获取的应用不为空,判断当前选中的应用是否存在，若存在仍为选中的应用；若不存在，则更换新的选中应用的数据
+          for (let i = 0; i < res.rows.length; i++) {
+            if (res.rows[i]['AppEUI'] === AppEUI) {
+              dispatch({
+                type: "GET_APPLICATION_INFO_NO_FIRST",
+                data: res.rows,
+              });
+              break;
+            } else {
+              if (i === res.rows.length - 1) {
+                dispatch({
+                  type: "GET_APPLICATION_INFO",
+                  data: res.rows,
+                });
+                AppEUI = res.rows[0]['AppEUI'];
+              }
+            }
+          }
+          fetchData.app2device(AppEUI, pagecount, pagesize) //使用应用的AppEUI获取相应的设备数据
             .then((res) => {
               dispatch({
                 type: "GET_DEVICE_INFO_BY_APPEUI",
@@ -167,12 +180,12 @@ export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过
           });
         } else { //DevAddr存在，说明设备已经和server进行了注册流程
           if (AppEUI === null || AppEUI === undefined) {
-            AppEUI = res.AppEUI
+            AppEUI = Buffer.from(res.AppEUI.data).toString('hex');
           }
           const DevAddr = res.DevAddr;
           fetchData.deviceGetColum(AppEUI) //获取colum的设置
             .then((res) => {
-              if (res && res.message) {
+              if (res && res.message && typeof (res.message) !== "string") {
                 var columIn = [{
                   title: '时间',
                   kName: '时间',
@@ -199,7 +212,7 @@ export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过
                   type: "DEVICE_DATA_COLUM",
                   data: columIn,
                 });
-                fetchData.deviceData(AppEUI, DevAddr, pagesize, pagecount)
+                fetchData.deviceData(AppEUI, Buffer.from(DevAddr.data).toString('hex'), pagesize, pagecount)
                   .then((res) => {
                     dispatch({
                       type: "DEVICE_GET_APP_DATA",
@@ -227,12 +240,12 @@ export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr
           });
         } else { //DevAddr存在，说明设备已经和server进行了注册流程
           if (AppEUI === null || AppEUI === undefined) {
-            AppEUI = res.AppEUI
+            AppEUI = Buffer.from(res.AppEUI.data).toString('hex');
           }
           const DevAddr = res.DevAddr;
           fetchData.deviceGetColum(AppEUI) //获取colum的设置
             .then((res) => {
-              if (res && res.message) {
+              if (res && res.message && typeof (res.message) !== "string") {
                 var columIn = [{
                   title: '时间',
                   kName: '时间',
@@ -259,7 +272,7 @@ export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr
                   type: "DEVICE_DATA_COLUM",
                   data: columIn,
                 });
-                fetchData.deviceData(AppEUI, DevAddr, 100, 1)
+                fetchData.deviceData(AppEUI, Buffer.from(DevAddr.data).toString('hex'), 100, 1)
                   .then((res) => {
                     dispatch({
                       type: "DEVICE_GET_GRAPH_DATA",
