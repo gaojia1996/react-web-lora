@@ -45,7 +45,6 @@ class DeviceData extends Component {
     this.props.deviceDidUnmount();
   }
   render() {
-    console.log(this.props.data.deviceTableItem)
     const pagination = {
       current: this.props.data.devicePageCurrent,
       total: this.props.data.devicePagecount,
@@ -136,13 +135,13 @@ class DeviceData extends Component {
         } else {
           let pieArr = [0, 0, 0, 0, 0];
           array[i].forEach((value) => { //构成饼状图的数据
-            if (value <= labelArr[0]) {
+            if (value <= labelArr[1]) {
               pieArr[0]++;
-            } else if (value <= labelArr[1]) {
-              pieArr[1]++;
             } else if (value <= labelArr[2]) {
-              pieArr[2]++;
+              pieArr[1]++;
             } else if (value <= labelArr[3]) {
+              pieArr[2]++;
+            } else if (value <= labelArr[4]) {
               pieArr[3]++;
             } else {
               pieArr[4]++;
@@ -150,11 +149,11 @@ class DeviceData extends Component {
           })
           pieObj = {
             labels: [
-              min + "-" + labelArr[0],
-              labelArr[0] + "-" + labelArr[1],
-              labelArr[1] + "-" + labelArr[2],
-              labelArr[2] + "-" + labelArr[3],
-              labelArr[3] + "-" + max,
+              min + "-" + labelArr[1].toFixed(1),
+              labelArr[1].toFixed(1) + "-" + labelArr[2].toFixed(1),
+              labelArr[2].toFixed(1) + "-" + labelArr[3].toFixed(1),
+              labelArr[3].toFixed(1) + "-" + labelArr[4].toFixed(1),
+              labelArr[4].toFixed(1) + "-" + max,
             ],
             datasets: [
               {

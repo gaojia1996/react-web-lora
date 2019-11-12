@@ -242,7 +242,7 @@ export default (state = initialState, action) => {
     case "DEVICE_CHANGE_CURRENT_PAGE": { //应用table页面改变
       return {
         ...state,
-        deviceFetch: false,
+        // deviceFetch: false,
         devicePageCurrent: action.devicePageCurrent,
       }
     }
