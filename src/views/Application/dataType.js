@@ -12,12 +12,12 @@ class AppDataType extends Component {
     this.state = {
       changeOne: false,
       singleIndex: 0,
-      addOne:false,
-      forAddOne:{
-        type:null,
-        id:null,
-        name:null,
-        unit:null,
+      addOne: false,
+      forAddOne: {
+        type: null,
+        id: null,
+        name: null,
+        unit: null,
       },
       hasData: false,
       modal: false,
@@ -87,7 +87,7 @@ class AppDataType extends Component {
   getAppDataType(AppEUI) {
     getDataFuncs.getAppDataTypeFunc(AppEUI)
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res['message'] === 'No such item' || res['message'] === '{}') {
           this.setState({
             messageName: [null],
@@ -136,16 +136,15 @@ class AppDataType extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          alert('成功修改数据格式');
+          alert('成功修改数据格式~');
           this.handleToggle();
           //再次刷新页面
           this.getAppDataType(this.props.match.params.AppEUI);
         } else {
-          alert('操作失败');
+          alert('操作失败~');
         }
       })
   }
-
   deleteAppDataType(AppEUI, message) {
     const Url = baseUrl + '/app2devType';
     var data = {
@@ -161,19 +160,17 @@ class AppDataType extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          alert('成功修改数据格式');
+          alert('成功修改数据格式~');
           //再次刷新页面
           this.getAppDataType(this.props.match.params.AppEUI);
         } else {
-          alert('操作失败');
+          alert('操作失败~');
         }
       })
   }
-
   createSingleView(index) {
     return (
       <React.Fragment key={index}>
-
         <InputGroup className="mb-3">
           <Col md="3">
             <InputGroupText>
@@ -232,14 +229,13 @@ class AppDataType extends Component {
       </ React.Fragment>
     )
   }
-
   render() {
-    if(this.state.addOne === true && this.state.modal === false) {
+    if (this.state.addOne === true && this.state.modal === false) {
       this.setState(
         {
-          addOne:false,
-          changeOne:false,
-          modal:false,
+          addOne: false,
+          changeOne: false,
+          modal: false,
         }
       )
       this.getAppDataType(this.props.match.params.AppEUI);
@@ -310,9 +306,9 @@ class AppDataType extends Component {
         )
       }
     )
-    var aaaa = {};
-    console.log('tttttt', aaaa === null)
-    console.log('the statr is ', this.state)
+    // var aaaa = {};
+    // console.log('tttttt', aaaa === null)
+    // console.log('the statr is ', this.state)
     var columns = [];
     columns.push({
       title: '种类',
@@ -334,7 +330,7 @@ class AppDataType extends Component {
         )
       }
     )
-    for (var i = 0; i < addColumns.length; i++) {
+    for (let i = 0; i < addColumns.length; i++) {
       columns.push(addColumns[i]);
     }
     const deleteButton = {
@@ -344,20 +340,14 @@ class AppDataType extends Component {
       width: '5%',
       render: (text, record, index) => {
         return (
-
           <Button color='danger' onClick={() => {
             var temp_message = this.state.message;
             delete temp_message[this.state.messageNameForShow[index]];
             this.deleteAppDataType(this.props.match.params.AppEUI, JSON.stringify(temp_message));
-
           }}>删除</Button>
-
-
         )
       }
-
     }
-
     const changeButton = {
       title: '操作2',
       dataIndex: 'changeButton',
@@ -365,7 +355,6 @@ class AppDataType extends Component {
       width: '5%',
       render: (text, record, index) => {
         return (
-
           <Button color='primary' onClick={() => {
             this.setState({
               changeOne: true,
@@ -373,11 +362,8 @@ class AppDataType extends Component {
               singleIndex: index,
             })
           }}>修改</Button>
-
-
         )
       }
-
     }
     columns.push(deleteButton);
     columns.push(changeButton);
@@ -389,8 +375,6 @@ class AppDataType extends Component {
         })
       }
     );
-
-
     return (
       <div className="animated fadeIn">
         <Row>
@@ -402,16 +386,17 @@ class AppDataType extends Component {
                   {this.state.hasData === false ?
                     (<Button color="warning" onClick={() => { this.handleToggle(); this.setState({ changeOne: false }) }}><i className="icon-plus"></i> {" "}创建</Button>) :
                     (<React.Fragment>
-                      <Button color="warning" onClick={() => { this.handleToggle(); 
-                        this.setState({ 
+                      <Button color="warning" onClick={() => {
+                        this.handleToggle();
+                        this.setState({
                           changeOne: true,
-                          singleIndex:this.state.messageName.length,
+                          singleIndex: this.state.messageName.length,
                           forTest: [...this.state.forTest, { type: null, id: null, name: null, unit: null }],
                           messageName: [...this.state.messageName, null],
-                          addOne:true,
-                        }) 
-                        }}><i className="icon-plus"></i> {" "}增加</Button>
-                        {/* {'  -   '} */}
+                          addOne: true,
+                        })
+                      }}><i className="icon-plus"></i> {" "}增加</Button>
+                      {/* {'  -   '} */}
                       {/* <Button color="warning" onClick={() => { this.handleToggle(); this.setState({ changeOne: false }) }}><i className="icon-plus"></i> {" "}更改</Button> */}
                     </React.Fragment>
                     )
@@ -421,13 +406,12 @@ class AppDataType extends Component {
               <CardBody>
                 <div>
                   {this.state.hasData === false ?
-                    (<font size='4' color='red'>对不起，该应用暂时还没有定义数据格式,请先点击上方创建数据格式</font>) :
+                    (<font size='4' color='red'>对不起，该应用暂时还没有定义数据格式,请先点击上方创建数据格式~</font>) :
                     (
                       <Table
                         dataSource={dataSource}
                         columns={columns}
-                        rowKey={record => record.timestamp}
-                        scroll={{ x: 1200 }}
+                        rowKey={record => record.typeKind + Math.random().toFixed(3)}
                         loading={false} />
                     )
                   }
@@ -437,7 +421,7 @@ class AppDataType extends Component {
           </Col>
         </Row>
 
-        <Modal isOpen={this.state.modal} toggle={this.handleToggle} key="gateway_create">
+        <Modal isOpen={this.state.modal} toggle={this.handleToggle} key="dataType_create">
           <ModalHeader toggle={this.handleToggle}>数据格式</ModalHeader>
           <ModalBody>
             <Form className="form-horizontal">
@@ -445,41 +429,29 @@ class AppDataType extends Component {
               {this.state.changeOne === false ?
                 (<center><Button color='danger' onClick={
                   () => {
-                    console.log('点击一次增加');
+                    // console.log('点击一次增加');
                     this.setState({
                       forTest: [...this.state.forTest, { type: null, id: null, name: null, unit: null }],
                       messageName: [...this.state.messageName, null],
-
                     })
                   }
                 }
                 >增加种类</Button></center>) : null
               }
-
             </Form>
-
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-
               var temp_message = {};
               const temp_message1 = this.state.messageName;
               const temp_forTest = this.state.forTest;
-              
-              console.log('statrt')
-              console.log('the............................. is',temp_message1)
-             
               for (var i = 0; i < temp_message1.length; i++) {
                 temp_message[temp_message1[i]] = temp_forTest[i];
               }
-              console.log('??????????',temp_message);
-              console.log("end")
               this.postAppDataType(this.props.match.params.AppEUI, JSON.stringify(temp_message));
-
-
             }
             }>确认</Button>{' '}
-            <Button color="secondary" onClick={()=>{this.handleToggle();console.log('what is the matter')}}>取消</Button>
+            <Button color="secondary" onClick={() => { this.handleToggle()}}>取消</Button>
           </ModalFooter>
         </Modal>
       </div>
@@ -488,5 +460,3 @@ class AppDataType extends Component {
 }
 
 export default AppDataType;
-
-

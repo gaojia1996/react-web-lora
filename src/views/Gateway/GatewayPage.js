@@ -394,8 +394,7 @@ class GatewayPage extends Component {
                     {
                       pageSize: this.state.pageSize,
                       total: this.props.data.gatewayNumber,
-                      current: this.props.data.currentPageOfGateway
-
+                      current: this.props.data.currentPageOfGateway,
                     }
                   }
                   onChange={(pagination) => {
@@ -403,12 +402,10 @@ class GatewayPage extends Component {
                       currentPage: pagination.current,
                     });
                     this.props.getGatewayInfo(this.props.data.userId, pagination.current, this.state.pageSize);
-
                   }}
                   dataSource={dataSource}
                   columns={columns}
                   rowKey={record => record.timestamp}
-                  // scroll={{ x: 1200 }}
                   loading={false} />
               </CardBody>
             </Card>

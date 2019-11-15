@@ -9,7 +9,6 @@ import qs from 'query-string';
 import getDataFuncs from '../../redux/actions/getDataFuncs'
 import config from '../../config.js'
 
-
 const baseUrl = config.dataUrl;
 class AppPage extends Component {
   constructor(props) {
@@ -18,11 +17,10 @@ class AppPage extends Component {
       modal: false,
       nameValid: false,
       euiValid: true,
-      name: null,
+      name: "",
       AppEUI: this.getRandom(16),
-      // AppEUI: null,
-      description:null,
-      pageSize: 7,
+      description: "",
+      pageSize: 8,
       currentPage: 1,
       data: {
         count: 0,
@@ -33,20 +31,18 @@ class AppPage extends Component {
     this.handleName = this.handleName.bind(this);
     this.handleAppEUI = this.handleAppEUI.bind(this);
     this.handleDescription = this.handleDescription.bind(this);
-    
   }
   componentDidMount() {
     this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
   }
   getAppData(userId, pageNumber, pageSize) {
-
     getDataFuncs.getAppInfo(userId, pageNumber, pageSize)
       .then(res => {
         this.setState({
-          data: res
-        })
+          data: res,
+        });
       })
-      .catch(() => { console.log('获取网关通信数据错误'); })
+      .catch(() => { console.log('获取用户应用列表数据错误~') })
   }
   deleteOneApp(AppEUI) {
     const Url = baseUrl + '/application';
@@ -62,30 +58,34 @@ class AppPage extends Component {
     }).then(responce => responce.json())
       .then(res => {
         if (res.code === 200) {
-          alert('删除成功');
-          this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
+          alert('删除成功~');
+          if (this.state.data['rows'].length === 1 && this.state.pageSize !== 1) {
+            this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize - 1);
+          } else {
+            this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
+          }
         }
         else {
-          alert('删除遇到问题');
+          alert('删除遇到问题~');
         }
       })
       .catch(() => {
-        alert("删除失败，删除请求错误");
+        alert("删除失败，删除请求错误~");
       })
 
   }
-  postAppInfo(userId, AppEUI, name,description) {
+  postAppInfo(userId, AppEUI, name, description) {
     if (this.state.name === null) {
-      alert('应用名称不能为空，请重新输入');
+      alert('应用名称不能为空，请重新输入~');
     } else if (this.state.AppEUI === null || this.state.AppEUI.length !== 16) {
-      alert("AppEUI为16位，请重新输入");
+      alert("AppEUI为16位，请重新输入~");
     } else {
       const Url = baseUrl + '/application';
       var data = {
         userID: userId,
         AppEUI: AppEUI,
         name: name,
-        description:description
+        description: description
       }
       fetch(Url, {
         method: 'POST',
@@ -96,26 +96,28 @@ class AppPage extends Component {
       }).then(responce => responce.json())
         .then(res => {
           if (res.code === 200) {
-            alert('成功创建应用');
+            alert('成功创建应用~');
             this.handleToggle();
+            this.setState({
+              AppEUI: this.getRandom(16),
+            });
             this.getAppData(this.props.data.userId, this.state.pageNumber, this.state.pageSize);
           } else if (res.code === 3108) {
-            alert('名字不能为空，请重新输入');
+            alert('名字不能为空，请重新输入~');
           } else if (res.code === 3107) {
-            alert('APPEUI不能为空，请重新输入');
+            alert('APPEUI不能为空，请重新输入~');
           } else if (res.code === 2103) {
-            alert('AppEUI格式错误，请重新输入');
+            alert('AppEUI格式错误，请重新输入~');
           } else if (res.code === 3201) {
-            alert('创建失败，该应用已经存在');
+            alert('创建失败，该应用已经存在~');
             this.handleToggle();
           }
           else {
-            alert('创建失败,遇到其它未知的错误');
+            alert('创建失败,遇到其它未知的错误~');
             this.handleToggle();
           }
         })
     }
-
   }
   getRandom(weishu) {
     var random = '';
@@ -133,13 +135,14 @@ class AppPage extends Component {
   handleName(event) {
     this.setState({
       name: event.target.value,
-      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" ? false : true,
+      nameValid: event.target.value === " " || event.target.value === null || event.target.value === "" || (event.target.value.length > 0 && event.target.value.trim().length === 0) ? false : true,
     });
   }
   handleAppEUI(event) {
+    const regexp = /[0-9a-fA-F]{16}/;
     this.setState({
       AppEUI: event.target.value,
-      euiValid: event.target.value.length !== 16 || event.target.value === null || event.target.value === "" ? false : true,
+      euiValid: regexp.test(event.target.value) ? false : true,
     });
   }
   handleDescription(event) {
@@ -147,19 +150,16 @@ class AppPage extends Component {
       description: event.target.value,
     });
   }
-  handlePost() {
-
-  }
   render() {
-    console.log('the state is ',this.state)
-    const dataSource = this.state.data['rows'].map((each) => {
-      return ({
-        name: each['name'],
-        AppEUI: each['AppEUI'],
-        description:each['description'],
-        timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
-      })
-    })
+    const dataSource = this.state.data['rows'].length !== 0 ?
+      this.state.data['rows'].map((each) => {
+        return ({
+          name: each['name'],
+          AppEUI: each['AppEUI'],
+          description: each['description'],
+          timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
+        })
+      }) : [];
 
     const columns = [
       {
@@ -167,11 +167,11 @@ class AppPage extends Component {
         dataIndex: 'name',
         key: 'name',
         width: '10%',
+        sorter: (a, b) => a.name.length - b.name.length,
         render: (text, record, index) => {
           return <Link to={
             {
               pathname: `/application/${record.AppEUI}/${text}/dataType`,
-              // state: { name: name }
             }
           }>{text}</Link>
         }
@@ -181,23 +181,21 @@ class AppPage extends Component {
         dataIndex: 'AppEUI',
         key: 'AppEUI',
         width: '10%',
-        // render: AppEUI => AppEUI,
-        render: AppEUI=>AppEUI,
+        sorter: (a, b) => parseInt(String(a.AppEUI), 16) - parseInt(String(b.AppEUI), 16),
+        render: AppEUI => AppEUI,
       },
       {
         title: '描述',
         dataIndex: 'description',
         key: 'description',
         width: '10%',
-        // render: AppEUI => AppEUI,
-        render: description=>(description === null || description.length === 0 || description.trim().length === 0) ? '暂无' : description
+        render: description => (description === null || description.length === 0 || description.trim().length === 0) ? '暂无' : description
       },
-
-      
       {
         title: '创建时间',
         dataIndex: 'timestamp',
         key: 'timestamp',
+        sorter: (a, b) => Number(new Date(a.timestamp)) - Number(new Date(b.timestamp)),
         width: '10%',
         render: timestamp => timestamp,
       },
@@ -206,11 +204,9 @@ class AppPage extends Component {
         dataIndex: 'deleteEach',
         key: 'deleteEach',
         width: '5%',
-        // render: timestamp => moment(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss'),
         render: (text, record, index) => {
           return (
             <Button color="danger" onClick={() => {
-              // alert('this is ' + this.state.data['rows'][index]['AppEUI']);
               if (this.state.data['rows'][index]['AppEUI'] !== undefined) {
                 this.deleteOneApp(this.state.data['rows'][index]['AppEUI']);
               }
@@ -234,26 +230,25 @@ class AppPage extends Component {
                 <Table
                   pagination={{
                     pageSize: this.state.pageSize,
-                    total: this.state.data['count']
+                    current: this.state.currentPage,
+                    total: this.state.data['count'],
                   }}
                   onChange={(pagination) => {
                     this.setState({
                       currentPage: pagination.current,
-                    })
+                    });
                     this.getAppData(this.props.data.userId, pagination.current, this.state.pageSize);
-
                   }}
                   dataSource={dataSource}
                   columns={columns}
                   rowKey={record => record.timestamp}
-                  scroll={{ x: 1200 }}
                   loading={false} />
               </CardBody>
             </Card>
           </Col>
         </Row>
 
-        <Modal isOpen={this.state.modal} toggle={this.handleToggle} key="gateway_create">
+        <Modal isOpen={this.state.modal} toggle={this.handleToggle} key="application_create">
           <ModalHeader toggle={this.handleToggle}>创建应用</ModalHeader>
           <ModalBody>
             <Form className="form-horizontal">
@@ -282,19 +277,19 @@ class AppPage extends Component {
               <InputGroup className="mb-3">
                 <Col md="3">
                   <InputGroupText>
-                   描述：
+                    描述：
                 </InputGroupText>
                 </Col>
                 <Col xs="12" md="9">
                   <Input type="textarea" id="description" name="description" placeholder="选填，添加适当的描述" value={this.state.description}
-                    onChange={this.handleDescription}  />
+                    onChange={this.handleDescription} />
                 </Col>
               </InputGroup>
             </Form>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => {
-              this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name,this.state.description);
+              this.postAppInfo(this.props.data.userId, this.state.AppEUI, this.state.name, this.state.description);
             }}>确认</Button>{' '}
             <Button color="secondary" onClick={this.handleToggle}>取消</Button>
           </ModalFooter>
@@ -319,4 +314,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(AppPage);
-

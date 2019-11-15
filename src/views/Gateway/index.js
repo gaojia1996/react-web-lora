@@ -3,7 +3,6 @@ import { Provider } from "react-redux";
 import store from "../../redux/index.js"
 import GatewayPage from './GatewayPage'
 
-
 class Index extends Component {
   render() {
     return (
@@ -17,4 +16,5 @@ class Index extends Component {
     )
   }
 }
+
 export default Index;

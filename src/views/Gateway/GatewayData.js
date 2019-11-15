@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Row, } from 'reactstrap';
 import { Table } from 'antd';
-// import { connect } from "react-redux";
-// import { bindActionCreators } from "redux";
 import moment from 'moment';
 import getDataFuncs from '../../redux/actions/getDataFuncs'
-const testGatewayId = 'b827ebfffe075b04'
+const testGatewayId = 'b827ebfffe075b04';
+
 class GatewayData extends Component {
   constructor(props) {
     super(props);
@@ -22,29 +21,16 @@ class GatewayData extends Component {
     this.getGatewayCommunicateData(this.props.match.params.gatewayId, this.state.currentPage, this.state.pageSize);
   }
   getGatewayCommunicateData(gatewayId, pageNumber, pageSize) {
-
     getDataFuncs.getGatewayCommunicateDataFunc(gatewayId, pageNumber, pageSize)
       .then(res => {
         // console.log('the res is ', res)
         this.setState({
           data: res
-        })
-
+        });
       })
       .catch(() => { console.log('获取网关通信数据错误'); })
-    // alert('获取一次数据');
-
   }
   render() {
-    // console.log('the pams is ', this.props.match);
-    // console.log('the data of subpage is ', this.state.data);
-    // console.log('the id is', this.props.location.state.oneGatewayId);
-    // const gatewayId = this.props.location.state.oneGatewayId;
-    // const pagination = {
-    //   current: 0,
-    //   total: 1,
-    //   pageSize: 10,
-    // }
     const dataSource = this.state.data['rows'].map((each) => {
       return ({
         rxnb: each['rxnb'],
@@ -52,7 +38,6 @@ class GatewayData extends Component {
         rxfw: each['rxfw'],
         ackr: each['ackr'] + '%',
         dwnb: each['dwnb'],
-        // timestamp:new Date(each['updatedAt']).toLocaleString()
         txnb: each['txnb'],
         timestamp: moment(new Date(each['updatedAt'])).format('YYYY/MM/DD HH:mm:ss'),
       })
@@ -131,7 +116,6 @@ class GatewayData extends Component {
                             pageSize: this.state.pageSize,
                             total: this.state.data['count'],
                             current: this.state.currentPage,
-
                           }}
                           onChange={(pagination) => {
                             this.setState(
@@ -142,7 +126,6 @@ class GatewayData extends Component {
                           dataSource={dataSource}
                           columns={columns}
                           rowKey={record => record.timestamp}
-                          scroll={{ x: 1200 }}
                           loading={false} />
                       </CardBody>
                     </Card>
@@ -152,14 +135,9 @@ class GatewayData extends Component {
             </Card>
           </Col>
         </Row>
-
       </div>
     );
   }
 }
 
-
-
 export default GatewayData;
-
-
