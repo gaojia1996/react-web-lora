@@ -29,6 +29,7 @@
     "fetch": "^1.1.0",
     "flag-icon-css": "^3.3.0",
     "font-awesome": "^4.7.0",
+    "http-server": "^0.11.1",
     "moment": "^2.24.0",
     "node-sass": "^4.11.0",
     "prop-types": "^15.7.2",

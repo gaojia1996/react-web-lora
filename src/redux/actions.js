@@ -180,7 +180,7 @@ export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过
           });
         } else { //DevAddr存在，说明设备已经和server进行了注册流程
           if (AppEUI === null || AppEUI === undefined) {
-            AppEUI = Buffer.from(res.AppEUI.data).toString('hex');
+            AppEUI = res.AppEUI;
           }
           const DevAddr = res.DevAddr;
           fetchData.deviceGetColum(AppEUI) //获取colum的设置
@@ -212,7 +212,7 @@ export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过
                   type: "DEVICE_DATA_COLUM",
                   data: columIn,
                 });
-                fetchData.deviceData(AppEUI, Buffer.from(DevAddr.data).toString('hex'), pagesize, pagecount)
+                fetchData.deviceData(AppEUI, DevAddr, pagesize, pagecount)
                   .then((res) => {
                     dispatch({
                       type: "DEVICE_GET_APP_DATA",
@@ -240,7 +240,7 @@ export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr
           });
         } else { //DevAddr存在，说明设备已经和server进行了注册流程
           if (AppEUI === null || AppEUI === undefined) {
-            AppEUI = Buffer.from(res.AppEUI.data).toString('hex');
+            AppEUI = res.AppEUI;
           }
           const DevAddr = res.DevAddr;
           fetchData.deviceGetColum(AppEUI) //获取colum的设置
@@ -272,7 +272,7 @@ export function deviceGetGraphData(DevEUI, AppEUI) { //通过DevEUI获取DevAddr
                   type: "DEVICE_DATA_COLUM",
                   data: columIn,
                 });
-                fetchData.deviceData(AppEUI, Buffer.from(DevAddr.data).toString('hex'), 100, 1)
+                fetchData.deviceData(AppEUI, DevAddr, 100, 1)
                   .then((res) => {
                     dispatch({
                       type: "DEVICE_GET_GRAPH_DATA",
