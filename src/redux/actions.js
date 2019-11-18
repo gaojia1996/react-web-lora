@@ -204,7 +204,7 @@ export function deviceGetAppData(DevEUI, AppEUI, pagesize, pagecount) { //通过
                     dataIndex: k,
                     key: keyIn,
                     width: '10%',
-                    render: keyIn => keyIn,
+                    render: keyIn => keyIn && keyIn !== "undefined" ? keyIn : "暂无",
                   };
                   columIn.push(objIn);
                 }
